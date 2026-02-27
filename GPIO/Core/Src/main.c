@@ -34,7 +34,7 @@
 #define FOUT_TARGET  50.0f       // tần số điện áp mong muốn (Hz)
 #define Pi 3.14159265359f
 
-// Encoder struct (từ Steppeschool + cải tiến)
+
 typedef struct {
     int16_t  velocity;           // Vận tốc (counts per sampling period, có dấu)
     int64_t  position;           // Vị trí tích lũy (hỗ trợ nhiều vòng quay)
@@ -89,12 +89,15 @@ static uint8_t     first_time = 0;           // Flag lần đầu cho encoder
 
 //ADC
 
-uint32_t ADC_VAL[2];                    // Không volatile ở đây
-volatile uint32_t *pADC_VAL = ADC_VAL;  // Pointer volatile để CPU biết có thể thay đổi bất kỳ lúc nào
+uint32_t ADC_VAL[2];                    
+volatile uint32_t *pADC_VAL = ADC_VAL; 
 
 // Hall sensor
 uint8_t raw_state ;
- 
+ uint8_t hall_u;
+uint8_t hall_v;
+uint8_t hall_w;
+uint8_t s_hall ;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -224,7 +227,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
         SVPWM();  // Giữ nguyên SVPWM ở 5 kHz
 
     }
-    else if (htim->Instance == TIM4)
+    else if (htim->Instance == TIM5)
     {
         // Đọc encoder ở đây (sampling nhanh hơn TIM3 nếu cần)
 			  update_encoder(&enc_instance_mot, &htim2);
@@ -236,36 +239,37 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 }
 void hall_enable(void)
 {
-    __HAL_TIM_ENABLE_IT(&htim5, TIM_IT_TRIGGER);   // Bật ngắt khi Hall thay đổi
-    __HAL_TIM_ENABLE_IT(&htim5, TIM_IT_UPDATE);    // Bật ngắt update (cho stall)
-    HAL_TIMEx_HallSensor_Start(&htim5);            // Bắt đầu Hall interface
+    __HAL_TIM_ENABLE_IT(&htim4, TIM_IT_TRIGGER);   // Bật ngắt khi Hall thay đổi
+    __HAL_TIM_ENABLE_IT(&htim4, TIM_IT_UPDATE);    // Bật ngắt update (cho stall)
+    HAL_TIMEx_HallSensor_Start(&htim4);            // Bắt đầu Hall interface
     // Optional: commutate lần đầu để khởi động
     // commutate(get_hall_state());
 }
 uint8_t get_hall_state(void)
 {
-    uint8_t hall_u = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0);  
-    uint8_t hall_v = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1); 
-    uint8_t hall_w = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_2);  
-
-    // Ghép thành 3 bit: hall_u (bit 2), hall_v (bit 1), hall_w (bit 0)
-     raw_state= (hall_u << 2) | (hall_v << 1) | hall_w;
-
-    // Map sang số bước 1-6 (theo thứ tự phổ biến 120° Hall, bỏ invalid 000 & 111)
+    hall_u = HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_12);
+    hall_v = HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_13);
+    hall_w = HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_14);
+    
+    raw_state = (hall_u << 2) | (hall_v << 1) | hall_w;
+    s = 0;  // Khai báo biến s và khởi tạo mặc định là 0 (invalid)
+    
     switch (raw_state)
     {
-        case 0b001: return 1;   // Hall: 001
-        case 0b011: return 2;   // 011
-        case 0b010: return 3;   // 010
-        case 0b110: return 4;   // 110
-        case 0b100: return 5;   // 100
-        case 0b101: return 6;   // 101
-        default:    return 0;   // Invalid (000 hoặc 111) → không commutate
+        case 0b001: s_hall = 5; break;   // 001 → 5
+        case 0b011: s_hall = 4; break;   // 011 → 4
+        case 0b010: s_hall = 3; break;   // 010 → 3
+        case 0b110: s_hall = 2; break;   // 110 → 2
+        case 0b100: s_hall = 1; break;   // 100 → 1
+        case 0b101: s_hall = 6; break;   // 101 → 6
+        default:   s_hall = 0;           // invalid → 0
     }
+    
+    return s_hall ;  // Trả về giá trị s
 }
 void HAL_TIM_TriggerCallback(TIM_HandleTypeDef *htim)
 {
-    if (htim == &htim5)
+    if (htim == &htim4)
     {
         uint8_t hall_step = get_hall_state();
         if (hall_step != 0)
@@ -324,7 +328,7 @@ int main(void)
     HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_2);
     HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_3);
     HAL_TIM_Base_Start_IT(&htim3);
-		HAL_TIM_Base_Start_IT(&htim4);
+		HAL_TIM_Base_Start_IT(&htim5);
 		HAL_TIM_Encoder_Start(&htim2,TIM_CHANNEL_ALL);
 		Update_Tperiod();
 		HAL_ADC_Start_DMA(&hadc1,ADC_VAL, 1);
@@ -679,7 +683,7 @@ static void MX_TIM4_Init(void)
 
   /* USER CODE END TIM4_Init 0 */
 
-  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+  TIM_HallSensor_InitTypeDef sConfig = {0};
   TIM_MasterConfigTypeDef sMasterConfig = {0};
 
   /* USER CODE BEGIN TIM4_Init 1 */
@@ -688,19 +692,18 @@ static void MX_TIM4_Init(void)
   htim4.Instance = TIM4;
   htim4.Init.Prescaler = 0;
   htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim4.Init.Period = 54999;
+  htim4.Init.Period = 65535;
   htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim4.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-  if (HAL_TIM_Base_Init(&htim4) != HAL_OK)
+  sConfig.IC1Polarity = TIM_ICPOLARITY_RISING;
+  sConfig.IC1Prescaler = TIM_ICPSC_DIV1;
+  sConfig.IC1Filter = 0;
+  sConfig.Commutation_Delay = 0;
+  if (HAL_TIMEx_HallSensor_Init(&htim4, &sConfig) != HAL_OK)
   {
     Error_Handler();
   }
-  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
-  if (HAL_TIM_ConfigClockSource(&htim4, &sClockSourceConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_OC2REF;
   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
   if (HAL_TIMEx_MasterConfigSynchronization(&htim4, &sMasterConfig) != HAL_OK)
   {
@@ -725,7 +728,6 @@ static void MX_TIM5_Init(void)
   /* USER CODE END TIM5_Init 0 */
 
   TIM_ClockConfigTypeDef sClockSourceConfig = {0};
-  TIM_HallSensor_InitTypeDef sConfig = {0};
   TIM_MasterConfigTypeDef sMasterConfig = {0};
 
   /* USER CODE BEGIN TIM5_Init 1 */
@@ -734,7 +736,7 @@ static void MX_TIM5_Init(void)
   htim5.Instance = TIM5;
   htim5.Init.Prescaler = 0;
   htim5.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim5.Init.Period = 4294967295;
+  htim5.Init.Period = 137499;
   htim5.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim5.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim5) != HAL_OK)
@@ -746,15 +748,7 @@ static void MX_TIM5_Init(void)
   {
     Error_Handler();
   }
-  sConfig.IC1Polarity = TIM_ICPOLARITY_RISING;
-  sConfig.IC1Prescaler = TIM_ICPSC_DIV1;
-  sConfig.IC1Filter = 0;
-  sConfig.Commutation_Delay = 0;
-  if (HAL_TIMEx_HallSensor_Init(&htim5, &sConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  sMasterConfig.MasterOutputTrigger = TIM_TRGO_OC2REF;
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
   if (HAL_TIMEx_MasterConfigSynchronization(&htim5, &sMasterConfig) != HAL_OK)
   {
@@ -798,7 +792,7 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOF_CLK_ENABLE();
   __HAL_RCC_GPIOE_CLK_ENABLE();
-  __HAL_RCC_GPIOB_CLK_ENABLE();
+  __HAL_RCC_GPIOD_CLK_ENABLE();
 
   /* USER CODE BEGIN MX_GPIO_Init_2 */
 
