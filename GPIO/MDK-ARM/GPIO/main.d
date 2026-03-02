@@ -61,4 +61,5 @@ gpio/main.o: ..\Core\Src\main.c ..\Core\Inc\main.h \
   C:\Users\VU\ VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\dsp\quaternion_math_functions.h \
   C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdbool.h \
   C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdio.h \
-  C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdlib.h
+  C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdlib.h ..\Core\Src\encoder.h \
+  ..\MDK-ARM\hall.h

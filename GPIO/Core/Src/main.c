@@ -26,6 +26,9 @@
 #include "stdio.h"
 #include "stdlib.h"
 #include "string.h"
+
+#include "encoder.h"
+#include "hall.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -35,11 +38,6 @@
 #define Pi 3.14159265359f
 
 
-typedef struct {
-    int16_t  velocity;           // Vận tốc (counts per sampling period, có dấu)
-    int64_t  position;           // Vị trí tích lũy (hỗ trợ nhiều vòng quay)
-    uint32_t last_counter_value; // Giá trị CNT lần trước
-} encoder_instance_t;
 
 /* USER CODE END PTD */
 
@@ -62,42 +60,25 @@ TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim4;
 TIM_HandleTypeDef htim5;
+TIM_HandleTypeDef htim23;
 
 /* USER CODE BEGIN PV */
-float Angle = 0.0f; // degree
-float Angle_radian = 0.0f; // rad
-float agl ; // // degree
-float agl_radian ; // rad
-
+//float Angle = 0.0f;             // electrical angle (degree) – được cập nhật bởi Encoder
+float Angle_radian = 0.0f;
+float agl, agl_radian;
 float Vd = 0.0f;
-float Vq = 5.0f;
+float Vq = 5.0f;                // Ví dụ – bạn có thể điều chỉnh qua PI controller sau
 float Vdc = 35.0f;
 float Tperiod = 0.0f;
-float Valpha , Vbeta , Vref ;
+float Valpha, Vbeta, Vref;
 float Ta = 0.0f, Tb = 0.0f, T0 = 0.0f, T1 = 0.0f, T2 = 0.0f;
 float u = 0.0f, v = 0.0f, w = 0.0f, g = 0.0f;
 float Tsw1 = 0.0f, Tsw2 = 0.0f, Tsw3 = 0.0f;
 uint8_t s;
-uint32_t counter =0;
-int16_t count = 0;
-int16_t position = 0;
 
-encoder_instance_t enc_instance_mot = {0};   // Encoder instance
-volatile int64_t   encoder_position = 0;     // Vị trí tích lũy (counts, 4x)
-volatile int16_t   encoder_velocity = 0;     // Vận tốc (delta counts/sample)
-static uint8_t     first_time = 0;           // Flag lần đầu cho encoder
-
-//ADC
-
-uint32_t ADC_VAL[2];                    
-volatile uint32_t *pADC_VAL = ADC_VAL; 
-
-// Hall sensor
-uint8_t raw_state ;
- uint8_t hall_u;
-uint8_t hall_v;
-uint8_t hall_w;
-uint8_t s_hall ;
+// ADC
+uint32_t ADC_VAL[2];
+volatile uint32_t *pADC_VAL = ADC_VAL;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -111,10 +92,10 @@ static void MX_TIM2_Init(void);
 static void MX_TIM4_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_TIM5_Init(void);
+static void MX_TIM23_Init(void);
 /* USER CODE BEGIN PFP */
 void Update_Tperiod(void);
 void SVPWM(void);
-void update_encoder(encoder_instance_t *encoder_value, TIM_HandleTypeDef *htim);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -138,16 +119,18 @@ void SVPWM(void)
     Angle_radian = Angle * (Pi / 180.0f);
     Valpha = arm_cos_f32(Angle_radian) * Vd - arm_sin_f32(Angle_radian) * Vq;
     Vbeta  = arm_sin_f32(Angle_radian) * Vd + arm_cos_f32(Angle_radian) * Vq;
-    arm_sqrt_f32(((Valpha * Valpha) + (Vbeta * Vbeta)), &Vref);
+
+    arm_sqrt_f32((Valpha * Valpha) + (Vbeta * Vbeta), &Vref);
+
     agl_radian = atan2f(Vbeta, Valpha);
     agl = agl_radian * (180.0f / Pi);
 
-    if (agl >= 0 && agl < 60)       s = 1;
-    else if (agl >= 60 && agl < 120)  s = 2;
+    if      (agl >=   0 && agl <  60) s = 1;
+    else if (agl >=  60 && agl < 120) s = 2;
     else if (agl >= 120 && agl < 180) s = 3;
     else if (agl >= -180 && agl < -120) s = 4;
-    else if (agl >= -120 && agl < -60)  s = 5;
-    else if (agl >= -60 && agl < 0)     s = 6;
+    else if (agl >= -120 && agl <  -60) s = 5;
+    else if (agl >=  -60 && agl <   0) s = 6;
     else s = 0;
 
     Ta = T1 = (Tperiod * sqrtf(3.0f) / Vdc) * Vref * sinf((Pi * s / 3.0f) - agl_radian);
@@ -171,111 +154,35 @@ void SVPWM(void)
     }
 
     uint32_t max_count = htim1.Init.Period;
-    TIM1->CCR1 = (uint32_t)((Tsw1 / Tperiod) * max_count); // U
-    TIM1->CCR2 = (uint32_t)((Tsw2 / Tperiod) * max_count); // V
-    TIM1->CCR3 = (uint32_t)((Tsw3 / Tperiod) * max_count); // W
-}
-
-void update_encoder(encoder_instance_t *encoder_value, TIM_HandleTypeDef *htim)
-{
-    uint32_t temp_counter = __HAL_TIM_GET_COUNTER(htim);
-
-    if (!first_time)
-    {
-        encoder_value->velocity = 0;
-        first_time = 1;
-    }
-    else
-    {
-        if (temp_counter == encoder_value->last_counter_value)
-        {
-            encoder_value->velocity = 0;
-        }
-        else if (temp_counter > encoder_value->last_counter_value)
-        {
-            if (__HAL_TIM_IS_TIM_COUNTING_DOWN(htim))
-            {
-                encoder_value->velocity = - (encoder_value->last_counter_value +
-                                             (__HAL_TIM_GET_AUTORELOAD(htim) - temp_counter + 1));
-            }
-            else
-            {
-                encoder_value->velocity = temp_counter - encoder_value->last_counter_value;
-            }
-        }
-        else
-        {
-            if (__HAL_TIM_IS_TIM_COUNTING_DOWN(htim))
-            {
-                encoder_value->velocity = temp_counter - encoder_value->last_counter_value;
-            }
-            else
-            {
-                encoder_value->velocity = temp_counter +
-                                          (__HAL_TIM_GET_AUTORELOAD(htim) - encoder_value->last_counter_value + 1);
-            }
-        }
-    }
-
-    encoder_value->position += encoder_value->velocity;
-    encoder_value->last_counter_value = temp_counter;
+    TIM1->CCR1 = (uint32_t)((Tsw1 / Tperiod) * max_count);
+    TIM1->CCR2 = (uint32_t)((Tsw2 / Tperiod) * max_count);
+    TIM1->CCR3 = (uint32_t)((Tsw3 / Tperiod) * max_count);
 }
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
     if (htim->Instance == TIM3)
     {
-        SVPWM();  // Giữ nguyên SVPWM ở 5 kHz
-
+        SVPWM();                    // 5 kHz SVPWM
     }
     else if (htim->Instance == TIM5)
     {
-        // Đọc encoder ở đây (sampling nhanh hơn TIM3 nếu cần)
-			  update_encoder(&enc_instance_mot, &htim2);
-        encoder_position = enc_instance_mot.position;
-        encoder_velocity = enc_instance_mot.velocity;
+        Encoder_Update(&htim2, &htim23);
 
-
+        if (Encoder_IsIndexFound())
+        {
+            Encoder_GetElectricalAngle(&htim2);
+        }
     }
 }
-void hall_enable(void)
-{
-    __HAL_TIM_ENABLE_IT(&htim4, TIM_IT_TRIGGER);   // Bật ngắt khi Hall thay đổi
-    __HAL_TIM_ENABLE_IT(&htim4, TIM_IT_UPDATE);    // Bật ngắt update (cho stall)
-    HAL_TIMEx_HallSensor_Start(&htim4);            // Bắt đầu Hall interface
-    // Optional: commutate lần đầu để khởi động
-    // commutate(get_hall_state());
-}
-uint8_t get_hall_state(void)
-{
-    hall_u = HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_12);
-    hall_v = HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_13);
-    hall_w = HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_14);
-    
-    raw_state = (hall_u << 2) | (hall_v << 1) | hall_w;
-    s = 0;  // Khai báo biến s và khởi tạo mặc định là 0 (invalid)
-    
-    switch (raw_state)
-    {
-        case 0b001: s_hall = 5; break;   // 001 → 5
-        case 0b011: s_hall = 4; break;   // 011 → 4
-        case 0b010: s_hall = 3; break;   // 010 → 3
-        case 0b110: s_hall = 2; break;   // 110 → 2
-        case 0b100: s_hall = 1; break;   // 100 → 1
-        case 0b101: s_hall = 6; break;   // 101 → 6
-        default:   s_hall = 0;           // invalid → 0
-    }
-    
-    return s_hall ;  // Trả về giá trị s
-}
+
 void HAL_TIM_TriggerCallback(TIM_HandleTypeDef *htim)
 {
     if (htim == &htim4)
     {
-        uint8_t hall_step = get_hall_state();
+        uint8_t hall_step = Hall_GetState();
         if (hall_step != 0)
         {
-            // Ở đây commutate(hall_step);  // Nhưng bạn chỉ hỏi phần đọc, nên bỏ qua
-            // Reset stall counter nếu có: update_counter = 0;
+            Hall_Commutate(hall_step);
         }
     }
 }
@@ -320,26 +227,30 @@ int main(void)
   MX_TIM4_Init();
   MX_ADC1_Init();
   MX_TIM5_Init();
+  MX_TIM23_Init();
   /* USER CODE BEGIN 2 */
-    HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
-    HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
-    HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
-    HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_1);
-    HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_2);
-    HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_3);
-    HAL_TIM_Base_Start_IT(&htim3);
-		HAL_TIM_Base_Start_IT(&htim5);
-		HAL_TIM_Encoder_Start(&htim2,TIM_CHANNEL_ALL);
-		Update_Tperiod();
-		HAL_ADC_Start_DMA(&hadc1,ADC_VAL, 1);
-		hall_enable();
-		// Reset encoder ban đầu
-  enc_instance_mot.velocity = 0;
-  enc_instance_mot.position = 0;
-  enc_instance_mot.last_counter_value = 0;
-  encoder_position = 0;
-  encoder_velocity = 0;
-  first_time = 0;
+	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
+  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
+  HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_1);
+  HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_2);
+  HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_3);
+
+  // Khởi động các timer cần thiết
+  HAL_TIM_Base_Start_IT(&htim3);          // 5 kHz → SVPWM
+  HAL_TIM_Base_Start_IT(&htim5);          // ví dụ 1 kHz → encoder update
+  HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
+  HAL_TIM_Base_Start(&htim23);
+
+  // Khởi tạo module encoder & hall
+  Encoder_Init(&htim2, &htim23);
+  Hall_Init(&htim4);
+
+  // Tính toán chu kỳ PWM một lần
+  Update_Tperiod();
+
+  // Bắt đầu ADC DMA (nếu dùng đo dòng / điện áp)
+  HAL_ADC_Start_DMA(&hadc1, ADC_VAL, 2);   // chú ý: bạn khai báo ADC_VAL[2]
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -601,7 +512,7 @@ static void MX_TIM2_Init(void)
   htim2.Init.Period = 4294967295;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-  sConfig.EncoderMode = TIM_ENCODERMODE_TI1;
+  sConfig.EncoderMode = TIM_ENCODERMODE_TI12;
   sConfig.IC1Polarity = TIM_ICPOLARITY_RISING;
   sConfig.IC1Selection = TIM_ICSELECTION_DIRECTTI;
   sConfig.IC1Prescaler = TIM_ICPSC_DIV1;
@@ -761,6 +672,54 @@ static void MX_TIM5_Init(void)
 }
 
 /**
+  * @brief TIM23 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM23_Init(void)
+{
+
+  /* USER CODE BEGIN TIM23_Init 0 */
+
+  /* USER CODE END TIM23_Init 0 */
+
+  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+
+  /* USER CODE BEGIN TIM23_Init 1 */
+
+  /* USER CODE END TIM23_Init 1 */
+  htim23.Instance = TIM23;
+  htim23.Init.Prescaler = 0;
+  htim23.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim23.Init.Period = 4294967295;
+  htim23.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim23.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim23) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_ETRMODE2;
+  sClockSourceConfig.ClockPolarity = TIM_CLOCKPOLARITY_NONINVERTED;
+  sClockSourceConfig.ClockPrescaler = TIM_CLOCKPRESCALER_DIV1;
+  sClockSourceConfig.ClockFilter = 0;
+  if (HAL_TIM_ConfigClockSource(&htim23, &sClockSourceConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim23, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM23_Init 2 */
+
+  /* USER CODE END TIM23_Init 2 */
+
+}
+
+/**
   * Enable DMA controller clock
   */
 static void MX_DMA_Init(void)
@@ -790,6 +749,7 @@ static void MX_GPIO_Init(void)
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOH_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
+  __HAL_RCC_GPIOB_CLK_ENABLE();
   __HAL_RCC_GPIOF_CLK_ENABLE();
   __HAL_RCC_GPIOE_CLK_ENABLE();
   __HAL_RCC_GPIOD_CLK_ENABLE();

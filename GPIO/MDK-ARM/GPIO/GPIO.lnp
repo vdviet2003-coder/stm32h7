@@ -24,6 +24,8 @@
 "gpio\stm32h7xx_hal_tim.o"
 "gpio\stm32h7xx_hal_tim_ex.o"
 "gpio\system_stm32h7xx.o"
+"gpio\encoder.o"
+"gpio\hall.o"
 "gpio\basicmathfunctions.o"
 "gpio\basicmathfunctionsf16.o"
 "gpio\bayesfunctions.o"
