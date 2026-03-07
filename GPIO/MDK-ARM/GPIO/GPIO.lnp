@@ -1,6 +1,10 @@
 --cpu Cortex-M7.fp.dp
 "gpio\startup_stm32h723xx.o"
 "gpio\main.o"
+"gpio\gpio.o"
+"gpio\adc.o"
+"gpio\dma.o"
+"gpio\tim.o"
 "gpio\stm32h7xx_it.o"
 "gpio\stm32h7xx_hal_msp.o"
 "gpio\stm32h7xx_hal_adc.o"
@@ -24,8 +28,7 @@
 "gpio\stm32h7xx_hal_tim.o"
 "gpio\stm32h7xx_hal_tim_ex.o"
 "gpio\system_stm32h7xx.o"
-"gpio\encoder.o"
-"gpio\hall.o"
+"gpio\sensor.o"
 "gpio\basicmathfunctions.o"
 "gpio\basicmathfunctionsf16.o"
 "gpio\bayesfunctions.o"
@@ -54,7 +57,7 @@
 "gpio\supportfunctionsf16.o"
 "gpio\transformfunctions.o"
 "gpio\transformfunctionsf16.o"
---strict --scatter "GPIO\GPIO.sct"
+--library_type=microlib --strict --scatter "GPIO\GPIO.sct"
 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers
 --list "GPIO.map" -o GPIO\GPIO.axf
