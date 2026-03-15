@@ -1,7 +1,6 @@
 /**
   * @file    sensor.h
-  * @brief   Module Sensor (Hall UVW + Encoder ABZ) theo phong cách SimpleFOC
-  *          Dành cho STM32 HAL + PMSM FOC
+  * @brief   Combined Hall + Encoder sensor module (SimpleFOC style)
   */
 
 #ifndef SENSOR_H_
@@ -13,42 +12,66 @@
 #include <stdbool.h>
 #include <math.h>
 
-/* Exported types */
+/* ===================== Data structures ================================ */
+
+/**
+ * @brief  Common sensor data (mechanical angle, velocity)
+ */
 typedef struct {
-    float angle;                // Góc co h?c hi?n t?i (rad) - t? sensor
-    float velocity;             // V?n t?c góc (rad/s)
-    float electrical_angle;     // Góc di?n (rad) = angle * pole_pairs
-    bool  index_found;          // Ðã b?t du?c Z/index
+    float angle_mech;       /* Mechanical angle in [0, 2p) [rad]  */
+    float velocity;         /* Angular velocity [rad/s]  */
+    bool  index_found;      /* Z pulse detected? */
 } Sensor_t;
 
-/* Hall-specific */
+/**
+ * @brief  Hall-specific data
+ */
 typedef struct {
-    uint8_t step;               // 1..6 ho?c 0 (invalid)
-    uint8_t raw;                // 0bUVW
+    uint8_t step;           /* Current step (1..6) */
+    uint8_t raw;            /* Raw (U<<2)|(V<<1)|W */
+    float angle_elec;       /*!< Electrical angle estimated from Hall (for debugging)  */
 } HallSensor_t;
 
-/* Encoder-specific */
+/**
+ * @brief  Encoder-specific data
+ */
 typedef struct {
-    int64_t counts;             // Tích luy counts (có d?u)
-    int32_t delta;              // Delta counts/sample
-    uint32_t last_cnt;          // Giá tr? CNT tru?c
-    uint32_t last_z_cnt;        // Z counter tru?c
-		uint32_t z_cnt ;
+    int64_t counts;         /* Accumulated counts (signed) – */
+    int64_t z_counts;       /* Counts value at the moment of Z pulse (only used after index_found) */
+    int32_t delta;          /* Counts change last period  */
+    uint32_t last_cnt;      /* Previous counter value  */
+    uint32_t last_z_cnt;    /* Previous Z counter */
+    uint32_t z_cnt;         /* Current Z counter  */
 } EncoderSensor_t;
 
-/* Exported variables */
-extern Sensor_t sensor;                 // Sensor chung (angle, velocity, ...)
-extern HallSensor_t hall_sensor;
-extern EncoderSensor_t encoder_sensor;
+/* ===================== Exported variables ============================== */
+extern volatile Sensor_t sensor;
+extern volatile HallSensor_t hall_sensor;
+extern volatile EncoderSensor_t encoder_sensor;
 
-/* Exported functions */
-void Sensor_Init(void);                         // Kh?i t?o Hall + Encoder
-void EncoderSensor_Update(void);                       // G?i d?nh k? (trong TIM5 callback)
-uint8_t ReadZ(void);
+/* ===================== Function prototypes ============================= */
+void Sensor_Init(void);
+void EncoderSensor_Update(void);
 void HallSensor_Update(void);
-float Sensor_GetElectricalAngle(void);          // Góc di?n (rad) dùng cho FOC
-float Sensor_GetMechanicalAngle(void);          // Góc co h?c (rad)
-float Sensor_GetVelocity(void);                 // V?n t?c (rad/s)
-uint8_t Hall_GetStep(void);                     // L?y bu?c Hall (1..6)
+uint8_t ReadZ(void);
+
+/* [0, 2pi) – dùng cho FOC */
+float Sensor_GetElectricalAngle(void);
+
+/* Góc co trong m?t vòng [0, 2pi) */
+float Sensor_GetMechanicalAngle(void);
+
+/* V?n t?c góc (rad/s) */
+float Sensor_GetVelocity(void);
+
+/* V? trí tuy?t d?i (rad), không wrap – có th? l?n hon 2p */
+float Sensor_GetAbsolutePosition(void);
+
+/* Bu?c Hall hi?n t?i (1..6) */
+uint8_t Hall_GetStep(void);
+
+/* Debug functions – Hàm debug (có th? d?nh nghia sau) */
+void Sensor_PrintHallStatus(void);
+void Sensor_PrintEncoderStatus(void);
 
 #endif /* SENSOR_H_ */

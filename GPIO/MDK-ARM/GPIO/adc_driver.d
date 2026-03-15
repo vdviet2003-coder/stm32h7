@@ -1,5 +1,5 @@
-gpio/sensor.o: sensor.c ..\MDK-ARM\sensor.h ..\Core\Inc\main.h \
-  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
+gpio/adc_driver.o: adc_driver.c ..\MDK-ARM\adc_driver.h \
+  ..\Core\Inc\main.h ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
   ..\Core\Inc\stm32h7xx_hal_conf.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_def.h \
@@ -36,5 +36,4 @@ gpio/sensor.o: sensor.c ..\MDK-ARM\sensor.h ..\Core\Inc\main.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pwr_ex.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h \
-  ..\MDK-ARM\conf.h C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdbool.h \
-  ..\Core\Inc\tim.h C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdio.h
+  ..\MDK-ARM\conf.h ..\Core\Inc\tim.h ..\Core\Inc\adc.h

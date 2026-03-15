@@ -19,7 +19,6 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "adc.h"
-#include "dma.h"
 #include "tim.h"
 #include "gpio.h"
 
@@ -31,6 +30,7 @@
 #include "stdlib.h"
 #include "string.h"
 #include "sensor.h"
+#include "adc_driver.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -55,7 +55,9 @@
     float mech_angle_rad ;
     float velocity_rads  ;
     uint8_t hall_step   ;
-		uint8_t z_counter   ;
+		uint16_t z_counter   ;
+		float i1 ;
+		float i2;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -70,11 +72,15 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
     if (htim->Instance == TIM3)
 		{
-		 elec_angle_rad = Sensor_GetElectricalAngle();     // G�c di?n (rad) ? d�ng cho Park transform
-     mech_angle_rad = Sensor_GetMechanicalAngle();     // G�c co h?c (rad)
-     velocity_rads  = Sensor_GetVelocity();            // V?n t?c g�c (rad/s)
-     hall_step    = Hall_GetStep();                  // Bu?c Hall hi?n t?i (1..6)
-			z_counter=ReadZ();
+				HAL_GPIO_WritePin(GPIOF, GPIO_PIN_9, GPIO_PIN_SET);
+        elec_angle_rad = Sensor_GetElectricalAngle();     // Electrical angle (rad) for Park transform
+        mech_angle_rad = Sensor_GetMechanicalAngle();     // Mechanical angle (rad)
+        velocity_rads  = Sensor_GetVelocity();            // Angular velocity (rad/s)
+        hall_step      = Hall_GetStep();                  // Current Hall step (1..6)
+        z_counter      = ReadZ();
+				i1 = ADC_Driver_GetCurrents_1();
+			  i2 = ADC_Driver_GetCurrents_2();
+				HAL_GPIO_WritePin(GPIOF, GPIO_PIN_9, GPIO_PIN_RESET);
 		}
 		else if (htim->Instance == TIM5)
 		{
@@ -88,6 +94,7 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 			HallSensor_Update();
     }
 }
+
 /* USER CODE END 0 */
 
 /**
@@ -122,24 +129,28 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_DMA_Init();
   MX_TIM1_Init();
   MX_TIM3_Init();
   MX_TIM2_Init();
   MX_TIM4_Init();
-  MX_ADC1_Init();
   MX_TIM5_Init();
   MX_TIM23_Init();
+  MX_ADC1_Init();
+  MX_ADC2_Init();
+  MX_TIM6_Init();
   /* USER CODE BEGIN 2 */
-/*    HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+		HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
     HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
     HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
     HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_1);
     HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_2);
-    HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_3);*/
+    HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_3);
     HAL_TIM_Base_Start_IT(&htim3);
 		Sensor_Init();
 		HallSensor_Update();
+		//adc//
+		ADC_Driver_Init();
+		
   /* USER CODE END 2 */
 
   /* Infinite loop */
