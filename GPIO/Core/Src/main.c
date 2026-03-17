@@ -59,6 +59,7 @@ float velocity_rads;           /* Angular velocity (rad/s) */
 uint8_t hall_step;             /* Current Hall step (1..6) */
 uint16_t z_counter;             /* Z pulse counter */
 
+uint32_t max_count;
 /* Current measurement variables */
 float i1, i2;                   /* Phase A, B currents (A) */
 float i_alpha, i_beta;          /* Stationary frame currents */
@@ -67,7 +68,7 @@ float i_d, i_q;                  /* Rotating frame currents */
 /* Voltage commands (from PI controllers) */
 float agl ; // // degree
 float agl_radian ; // rad
-float Tperiod = MOTOR_PWM_FREQ ;
+float Tperiod = MOTOR_PWM_FREQ ; //hz
 float Vd = 0.0f;
 float Vq = 5.0f;
 float Vdc = 35.0f;
@@ -123,10 +124,10 @@ void SVPWM(float Angle_radian)
         case 6: Tsw1 = u; Tsw2 = w; Tsw3 = g; break;
     }
 
-    uint32_t max_count = htim1.Init.Period;
-    TIM1->CCR1 = (uint32_t)((Tsw1 / Tperiod) * max_count); // U
-    TIM1->CCR2 = (uint32_t)((Tsw2 / Tperiod) * max_count); // V
-    TIM1->CCR3 = (uint32_t)((Tsw3 / Tperiod) * max_count); // W
+    max_count = htim1.Init.Period;
+    TIM1->CCR1 = (uint32_t)(Tsw1*max_count/MOTOR_PWM_FREQ); // tam dien thuan 
+    TIM1->CCR2 = (uint32_t)(Tsw2*max_count/MOTOR_PWM_FREQ);
+    TIM1->CCR3 = (uint32_t)(Tsw3*max_count/MOTOR_PWM_FREQ);
 }
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
@@ -201,12 +202,14 @@ int main(void)
   MX_ADC2_Init();
   MX_TIM6_Init();
   /* USER CODE BEGIN 2 */
+		//center-alinge
     HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
     HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
     HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
     HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_1);
     HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_2);
     HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_3);
+		//
     HAL_TIM_Base_Start_IT(&htim3);
 		Sensor_Init();
 		HallSensor_Update();
