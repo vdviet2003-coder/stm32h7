@@ -31,6 +31,7 @@
 #include "string.h"
 #include "sensor.h"
 #include "adc_driver.h"
+//#include "svpwm.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -51,13 +52,30 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-		float elec_angle_rad ;
-    float mech_angle_rad ;
-    float velocity_rads  ;
-    uint8_t hall_step   ;
-		uint16_t z_counter   ;
-		float i1 ;
-		float i2;
+		/* Sensor variables */
+float elec_angle_rad;          /* Electrical angle (rad) */
+float mech_angle_rad;          /* Mechanical angle (rad) */
+float velocity_rads;           /* Angular velocity (rad/s) */
+uint8_t hall_step;             /* Current Hall step (1..6) */
+uint16_t z_counter;             /* Z pulse counter */
+
+/* Current measurement variables */
+float i1, i2;                   /* Phase A, B currents (A) */
+float i_alpha, i_beta;          /* Stationary frame currents */
+float i_d, i_q;                  /* Rotating frame currents */
+
+/* Voltage commands (from PI controllers) */
+float agl ; // // degree
+float agl_radian ; // rad
+float Tperiod = MOTOR_PWM_FREQ ;
+float Vd = 0.0f;
+float Vq = 5.0f;
+float Vdc = 35.0f;
+float Valpha , Vbeta , Vref ;
+float Ta = 0.0f, Tb = 0.0f, T0 = 0.0f, T1 = 0.0f, T2 = 0.0f;
+float u = 0.0f, v = 0.0f, w = 0.0f, g = 0.0f;
+float Tsw1 = 0.0f, Tsw2 = 0.0f, Tsw3 = 0.0f;
+uint8_t s;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -68,6 +86,49 @@ static void MPU_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+void SVPWM(float Angle_radian)
+{
+    //Angle_radian = Angle * (Pi / 180.0f);
+    Valpha = arm_cos_f32(Angle_radian) * Vd - arm_sin_f32(Angle_radian) * Vq;
+    Vbeta  = arm_sin_f32(Angle_radian) * Vd + arm_cos_f32(Angle_radian) * Vq;
+    arm_sqrt_f32(((Valpha * Valpha) + (Vbeta * Vbeta)), &Vref);
+    agl_radian = atan2f(Vbeta, Valpha);
+    agl = agl_radian * (180.0f / M_PI);
+
+    if (agl >= 0 && agl < 60)       s = 1;
+    else if (agl >= 60 && agl < 120)  s = 2;
+    else if (agl >= 120 && agl < 180) s = 3;
+    else if (agl >= -180 && agl < -120) s = 4;
+    else if (agl >= -120 && agl < -60)  s = 5;
+    else if (agl >= -60 && agl < 0)     s = 6;
+    else s = 0;
+
+    Ta = T1 = (Tperiod * sqrtf(3.0f) / Vdc) * Vref * sinf((M_PI * s / 3.0f) - agl_radian);
+    Tb = T2 = (Tperiod * sqrtf(3.0f) / Vdc) * Vref * sinf(agl_radian - ((s - 1) * M_PI / 3.0f));
+    T0 = Tperiod - Ta - Tb;
+
+    u = Tperiod - T0 / 2.0f;
+    v = (T0 / 2.0f) + T2;
+    w = T0 / 2.0f;
+    g = (T0 / 2.0f) + T1;
+
+    switch (s)
+    {
+        case 0: Tsw1 = 0; Tsw2 = 0; Tsw3 = 0; break;
+        case 1: Tsw1 = u; Tsw2 = v; Tsw3 = w; break;
+        case 2: Tsw1 = g; Tsw2 = u; Tsw3 = w; break;
+        case 3: Tsw1 = w; Tsw2 = u; Tsw3 = v; break;
+        case 4: Tsw1 = w; Tsw2 = g; Tsw3 = u; break;
+        case 5: Tsw1 = v; Tsw2 = w; Tsw3 = u; break;
+        case 6: Tsw1 = u; Tsw2 = w; Tsw3 = g; break;
+    }
+
+    uint32_t max_count = htim1.Init.Period;
+    TIM1->CCR1 = (uint32_t)((Tsw1 / Tperiod) * max_count); // U
+    TIM1->CCR2 = (uint32_t)((Tsw2 / Tperiod) * max_count); // V
+    TIM1->CCR3 = (uint32_t)((Tsw3 / Tperiod) * max_count); // W
+}
+
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
     if (htim->Instance == TIM3)
@@ -80,6 +141,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
         z_counter      = ReadZ();
 				i1 = ADC_Driver_GetCurrents_1();
 			  i2 = ADC_Driver_GetCurrents_2();
+				SVPWM(elec_angle_rad);
 				HAL_GPIO_WritePin(GPIOF, GPIO_PIN_9, GPIO_PIN_RESET);
 		}
 		else if (htim->Instance == TIM5)
@@ -139,7 +201,7 @@ int main(void)
   MX_ADC2_Init();
   MX_TIM6_Init();
   /* USER CODE BEGIN 2 */
-		HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+    HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
     HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
     HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
     HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_1);

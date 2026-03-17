@@ -1,7 +1,7 @@
 Dependencies for Project 'GPIO', Target 'GPIO': (DO NOT MODIFY !)
 CompilerVersion: 6190000::V6.19::ARMCLANG
-F (startup_stm32h723xx.s)(0x69B6C03C)(--target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -masm=auto  -Wa,armasm,--diag_suppress=A1950W -c-gdwarf-4 -Wa,armasm,--pd,"__MICROLIB SETA 1"-I./RTE/_GPIO-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/ComputeGraph/cg/static/nodes/cpp"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/ComputeGraph/cg/static/src"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/Include"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/PrivateInclude"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS/5.9.0/CMSIS/Core/Include"-Wa,armasm,--pd,"__UVISION_VERSION SETA 538" -Wa,armasm,--pd,"_RTE_ SETA 1" -Wa,armasm,--pd,"STM32H723xx SETA 1" -Wa,armasm,--pd,"_RTE_ SETA 1"-o gpio/startup_stm32h723xx.o)
-F (../Core/Src/main.c)(0x69B6C090)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../MDK-ARM -I ../Core/Src-I./RTE/_GPIO-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/ComputeGraph/cg/static/nodes/cpp"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/ComputeGraph/cg/static/src"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/Include"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/PrivateInclude"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS/5.9.0/CMSIS/Core/Include"-D__UVISION_VERSION="538" -D_RTE_ -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o gpio/main.o -MD)
+F (startup_stm32h723xx.s)(0x69B7AC9C)(--target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -masm=auto  -Wa,armasm,--diag_suppress=A1950W -c-gdwarf-4 -Wa,armasm,--pd,"__MICROLIB SETA 1"-I./RTE/_GPIO-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/ComputeGraph/cg/static/nodes/cpp"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/ComputeGraph/cg/static/src"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/Include"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/PrivateInclude"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS/5.9.0/CMSIS/Core/Include"-Wa,armasm,--pd,"__UVISION_VERSION SETA 538" -Wa,armasm,--pd,"_RTE_ SETA 1" -Wa,armasm,--pd,"STM32H723xx SETA 1" -Wa,armasm,--pd,"_RTE_ SETA 1"-o gpio/startup_stm32h723xx.o)
+F (../Core/Src/main.c)(0x69B80E5E)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../MDK-ARM -I ../Core/Src-I./RTE/_GPIO-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/ComputeGraph/cg/static/nodes/cpp"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/ComputeGraph/cg/static/src"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/Include"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/PrivateInclude"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS/5.9.0/CMSIS/Core/Include"-D__UVISION_VERSION="538" -D_RTE_ -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o gpio/main.o -MD)
 I (..\Core\Inc\main.h)(0x69B58738)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h)(0x699FEEAF)
 I (..\Core\Inc\stm32h7xx_hal_conf.h)(0x69B39FDB)
@@ -40,7 +40,7 @@ I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pwr.h)(0x699FEEAF)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pwr_ex.h)(0x699FEEAF)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim.h)(0x699FEEAF)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h)(0x699FEEAF)
-I (..\MDK-ARM\conf.h)(0x69B66EC5)
+I (..\MDK-ARM\conf.h)(0x69B812CA)
 I (..\Core\Inc\adc.h)(0x69B39FDA)
 I (..\Core\Inc\tim.h)(0x69B3D559)
 I (..\Core\Inc\gpio.h)(0x69AB09C3)
@@ -70,8 +70,8 @@ I (C:\Users\VU VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\dsp\qua
 I (C:\Keil_v5\ARM\ARMCLANG\include\stdbool.h)(0x63885718)
 I (C:\Keil_v5\ARM\ARMCLANG\include\stdio.h)(0x63885718)
 I (C:\Keil_v5\ARM\ARMCLANG\include\stdlib.h)(0x63885718)
-I (..\MDK-ARM\sensor.h)(0x69B66DB8)
-I (..\MDK-ARM\adc_driver.h)(0x69B6BEFE)
+I (..\MDK-ARM\sensor.h)(0x69B79231)
+I (..\MDK-ARM\adc_driver.h)(0x69B775E0)
 F (../Core/Src/gpio.c)(0x69B57FE9)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../MDK-ARM -I ../Core/Src-I./RTE/_GPIO-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/ComputeGraph/cg/static/nodes/cpp"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/ComputeGraph/cg/static/src"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/Include"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/PrivateInclude"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS/5.9.0/CMSIS/Core/Include"-D__UVISION_VERSION="538" -D_RTE_ -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o gpio/gpio.o -MD)
 I (..\Core\Inc\gpio.h)(0x69AB09C3)
 I (..\Core\Inc\main.h)(0x69B58738)
@@ -112,8 +112,8 @@ I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pwr.h)(0x699FEEAF)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pwr_ex.h)(0x699FEEAF)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim.h)(0x699FEEAF)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h)(0x699FEEAF)
-I (..\MDK-ARM\conf.h)(0x69B66EC5)
-F (../Core/Src/adc.c)(0x69B57CCD)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../MDK-ARM -I ../Core/Src-I./RTE/_GPIO-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/ComputeGraph/cg/static/nodes/cpp"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/ComputeGraph/cg/static/src"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/Include"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/PrivateInclude"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS/5.9.0/CMSIS/Core/Include"-D__UVISION_VERSION="538" -D_RTE_ -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o gpio/adc.o -MD)
+I (..\MDK-ARM\conf.h)(0x69B812CA)
+F (../Core/Src/adc.c)(0x69B7AC9A)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../MDK-ARM -I ../Core/Src-I./RTE/_GPIO-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/ComputeGraph/cg/static/nodes/cpp"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/ComputeGraph/cg/static/src"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/Include"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/PrivateInclude"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS/5.9.0/CMSIS/Core/Include"-D__UVISION_VERSION="538" -D_RTE_ -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o gpio/adc.o -MD)
 I (..\Core\Inc\adc.h)(0x69B39FDA)
 I (..\Core\Inc\main.h)(0x69B58738)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h)(0x699FEEAF)
@@ -153,7 +153,7 @@ I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pwr.h)(0x699FEEAF)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pwr_ex.h)(0x699FEEAF)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim.h)(0x699FEEAF)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h)(0x699FEEAF)
-I (..\MDK-ARM\conf.h)(0x69B66EC5)
+I (..\MDK-ARM\conf.h)(0x69B812CA)
 F (../Core/Src/tim.c)(0x69B57BAF)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../MDK-ARM -I ../Core/Src-I./RTE/_GPIO-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/ComputeGraph/cg/static/nodes/cpp"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/ComputeGraph/cg/static/src"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/Include"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/PrivateInclude"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS/5.9.0/CMSIS/Core/Include"-D__UVISION_VERSION="538" -D_RTE_ -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o gpio/tim.o -MD)
 I (..\Core\Inc\tim.h)(0x69B3D559)
 I (..\Core\Inc\main.h)(0x69B58738)
@@ -194,7 +194,7 @@ I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pwr.h)(0x699FEEAF)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pwr_ex.h)(0x699FEEAF)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim.h)(0x699FEEAF)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h)(0x699FEEAF)
-I (..\MDK-ARM\conf.h)(0x69B66EC5)
+I (..\MDK-ARM\conf.h)(0x69B812CA)
 F (../Core/Src/stm32h7xx_it.c)(0x69B39FDB)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../MDK-ARM -I ../Core/Src-I./RTE/_GPIO-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/ComputeGraph/cg/static/nodes/cpp"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/ComputeGraph/cg/static/src"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/Include"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/PrivateInclude"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS/5.9.0/CMSIS/Core/Include"-D__UVISION_VERSION="538" -D_RTE_ -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o gpio/stm32h7xx_it.o -MD)
 I (..\Core\Inc\main.h)(0x69B58738)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h)(0x699FEEAF)
@@ -234,7 +234,7 @@ I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pwr.h)(0x699FEEAF)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pwr_ex.h)(0x699FEEAF)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim.h)(0x699FEEAF)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h)(0x699FEEAF)
-I (..\MDK-ARM\conf.h)(0x69B66EC5)
+I (..\MDK-ARM\conf.h)(0x69B812CA)
 I (..\Core\Inc\stm32h7xx_it.h)(0x69B39FDB)
 F (../Core/Src/stm32h7xx_hal_msp.c)(0x69AB09C4)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../MDK-ARM -I ../Core/Src-I./RTE/_GPIO-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/ComputeGraph/cg/static/nodes/cpp"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/ComputeGraph/cg/static/src"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/Include"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/PrivateInclude"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS/5.9.0/CMSIS/Core/Include"-D__UVISION_VERSION="538" -D_RTE_ -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o gpio/stm32h7xx_hal_msp.o -MD)
 I (..\Core\Inc\main.h)(0x69B58738)
@@ -275,7 +275,7 @@ I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pwr.h)(0x699FEEAF)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pwr_ex.h)(0x699FEEAF)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim.h)(0x699FEEAF)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h)(0x699FEEAF)
-I (..\MDK-ARM\conf.h)(0x69B66EC5)
+I (..\MDK-ARM\conf.h)(0x69B812CA)
 F (../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_adc.c)(0x699FEEAF)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../MDK-ARM -I ../Core/Src-I./RTE/_GPIO-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/ComputeGraph/cg/static/nodes/cpp"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/ComputeGraph/cg/static/src"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/Include"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/PrivateInclude"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS/5.9.0/CMSIS/Core/Include"-D__UVISION_VERSION="538" -D_RTE_ -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o gpio/stm32h7xx_hal_adc.o -MD)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h)(0x699FEEAF)
 I (..\Core\Inc\stm32h7xx_hal_conf.h)(0x69B39FDB)
@@ -1074,10 +1074,10 @@ I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pwr.h)(0x699FEEAF)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pwr_ex.h)(0x699FEEAF)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim.h)(0x699FEEAF)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h)(0x699FEEAF)
-F (.\conf.h)(0x69B66EC5)()
-F (.\sensor.h)(0x69B66DB8)()
-F (.\sensor.c)(0x69B66C4F)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../MDK-ARM -I ../Core/Src-I./RTE/_GPIO-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/ComputeGraph/cg/static/nodes/cpp"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/ComputeGraph/cg/static/src"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/Include"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/PrivateInclude"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS/5.9.0/CMSIS/Core/Include"-D__UVISION_VERSION="538" -D_RTE_ -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o gpio/sensor.o -MD)
-I (..\MDK-ARM\sensor.h)(0x69B66DB8)
+F (.\conf.h)(0x69B812CA)()
+F (.\sensor.h)(0x69B79231)()
+F (.\sensor.c)(0x69B7923F)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../MDK-ARM -I ../Core/Src-I./RTE/_GPIO-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/ComputeGraph/cg/static/nodes/cpp"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/ComputeGraph/cg/static/src"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/Include"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/PrivateInclude"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS/5.9.0/CMSIS/Core/Include"-D__UVISION_VERSION="538" -D_RTE_ -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o gpio/sensor.o -MD)
+I (..\MDK-ARM\sensor.h)(0x69B79231)
 I (..\Core\Inc\main.h)(0x69B58738)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h)(0x699FEEAF)
 I (..\Core\Inc\stm32h7xx_hal_conf.h)(0x69B39FDB)
@@ -1116,13 +1116,12 @@ I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pwr.h)(0x699FEEAF)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pwr_ex.h)(0x699FEEAF)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim.h)(0x699FEEAF)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h)(0x699FEEAF)
-I (..\MDK-ARM\conf.h)(0x69B66EC5)
-I (C:\Keil_v5\ARM\ARMCLANG\include\stdbool.h)(0x63885718)
+I (..\MDK-ARM\conf.h)(0x69B812CA)
 I (..\Core\Inc\tim.h)(0x69B3D559)
-I (C:\Keil_v5\ARM\ARMCLANG\include\stdio.h)(0x63885718)
-F (.\adc_driver.h)(0x69B6BEFE)()
-F (.\adc_driver.c)(0x69B6C0C8)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../MDK-ARM -I ../Core/Src-I./RTE/_GPIO-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/ComputeGraph/cg/static/nodes/cpp"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/ComputeGraph/cg/static/src"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/Include"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/PrivateInclude"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS/5.9.0/CMSIS/Core/Include"-D__UVISION_VERSION="538" -D_RTE_ -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o gpio/adc_driver.o -MD)
-I (..\MDK-ARM\adc_driver.h)(0x69B6BEFE)
+I (C:\Keil_v5\ARM\ARMCLANG\include\stdbool.h)(0x63885718)
+F (.\adc_driver.h)(0x69B775E0)()
+F (.\adc_driver.c)(0x69B7AC7A)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../MDK-ARM -I ../Core/Src-I./RTE/_GPIO-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/ComputeGraph/cg/static/nodes/cpp"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/ComputeGraph/cg/static/src"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/Include"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/PrivateInclude"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS/5.9.0/CMSIS/Core/Include"-D__UVISION_VERSION="538" -D_RTE_ -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o gpio/adc_driver.o -MD)
+I (..\MDK-ARM\adc_driver.h)(0x69B775E0)
 I (..\Core\Inc\main.h)(0x69B58738)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h)(0x699FEEAF)
 I (..\Core\Inc\stm32h7xx_hal_conf.h)(0x69B39FDB)
@@ -1161,9 +1160,104 @@ I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pwr.h)(0x699FEEAF)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pwr_ex.h)(0x699FEEAF)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim.h)(0x699FEEAF)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h)(0x699FEEAF)
-I (..\MDK-ARM\conf.h)(0x69B66EC5)
+I (..\MDK-ARM\conf.h)(0x69B812CA)
 I (..\Core\Inc\tim.h)(0x69B3D559)
 I (..\Core\Inc\adc.h)(0x69B39FDA)
+F (.\foc_transform.h)(0x69B78449)()
+F (.\foc_transform.c)(0x69B78463)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../MDK-ARM -I ../Core/Src-I./RTE/_GPIO-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/ComputeGraph/cg/static/nodes/cpp"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/ComputeGraph/cg/static/src"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/Include"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/PrivateInclude"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS/5.9.0/CMSIS/Core/Include"-D__UVISION_VERSION="538" -D_RTE_ -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o gpio/foc_transform.o -MD)
+I (..\MDK-ARM\foc_transform.h)(0x69B78449)
+I (C:\Users\VU VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\arm_math.h)(0x6364736A)
+I (C:\Users\VU VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\arm_math_types.h)(0x6364736A)
+I (..\Drivers\CMSIS\Include\cmsis_compiler.h)(0x699FEEAE)
+I (C:\Keil_v5\ARM\ARMCLANG\include\stdint.h)(0x63885718)
+I (..\Drivers\CMSIS\Include\cmsis_armclang.h)(0x699FEEAE)
+I (C:\Keil_v5\ARM\ARMCLANG\include\string.h)(0x63885718)
+I (C:\Keil_v5\ARM\ARMCLANG\include\math.h)(0x63885718)
+I (C:\Keil_v5\ARM\ARMCLANG\include\float.h)(0x63885718)
+I (C:\Keil_v5\ARM\ARMCLANG\include\limits.h)(0x63885718)
+I (C:\Users\VU VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\arm_math_memory.h)(0x6364736A)
+I (C:\Users\VU VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\dsp\none.h)(0x6364736A)
+I (C:\Users\VU VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\dsp\utils.h)(0x6364736A)
+I (C:\Users\VU VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\dsp\basic_math_functions.h)(0x6364736A)
+I (C:\Users\VU VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\dsp\interpolation_functions.h)(0x6364736A)
+I (C:\Users\VU VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\dsp\bayes_functions.h)(0x6364736A)
+I (C:\Users\VU VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\dsp\statistics_functions.h)(0x6364736A)
+I (C:\Users\VU VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\dsp\fast_math_functions.h)(0x6364736A)
+I (C:\Users\VU VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\dsp\matrix_functions.h)(0x6364736A)
+I (C:\Users\VU VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\dsp\complex_math_functions.h)(0x6364736A)
+I (C:\Users\VU VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\dsp\controller_functions.h)(0x6364736A)
+I (C:\Users\VU VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\dsp\support_functions.h)(0x6364736A)
+I (C:\Users\VU VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\dsp\distance_functions.h)(0x6364736A)
+I (C:\Users\VU VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\dsp\svm_functions.h)(0x6364736A)
+I (C:\Users\VU VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\dsp\svm_defines.h)(0x6364736A)
+I (C:\Users\VU VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\dsp\transform_functions.h)(0x6364736A)
+I (C:\Users\VU VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\dsp\filtering_functions.h)(0x6364736A)
+I (C:\Users\VU VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\dsp\quaternion_math_functions.h)(0x6364736A)
+F (.\svpwm.h)(0x69B80B5D)()
+F (.\svpwm.c)(0x69B80B65)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../MDK-ARM -I ../Core/Src-I./RTE/_GPIO-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/ComputeGraph/cg/static/nodes/cpp"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/ComputeGraph/cg/static/src"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/Include"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/PrivateInclude"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS/5.9.0/CMSIS/Core/Include"-D__UVISION_VERSION="538" -D_RTE_ -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o gpio/svpwm.o -MD)
+I (..\MDK-ARM\svpwm.h)(0x69B80B5D)
+I (..\Core\Inc\main.h)(0x69B58738)
+I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h)(0x699FEEAF)
+I (..\Core\Inc\stm32h7xx_hal_conf.h)(0x69B39FDB)
+I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h)(0x699FEEAF)
+I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_def.h)(0x699FEEAF)
+I (..\Drivers\CMSIS\Device\ST\STM32H7xx\Include\stm32h7xx.h)(0x699FEEAF)
+I (..\Drivers\CMSIS\Device\ST\STM32H7xx\Include\stm32h723xx.h)(0x699FEEAF)
+I (..\Drivers\CMSIS\Include\core_cm7.h)(0x699FEEAE)
+I (C:\Keil_v5\ARM\ARMCLANG\include\stdint.h)(0x63885718)
+I (..\Drivers\CMSIS\Include\cmsis_version.h)(0x699FEEAE)
+I (..\Drivers\CMSIS\Include\cmsis_compiler.h)(0x699FEEAE)
+I (..\Drivers\CMSIS\Include\cmsis_armclang.h)(0x699FEEAE)
+I (..\Drivers\CMSIS\Include\mpu_armv7.h)(0x699FEEAE)
+I (..\Drivers\CMSIS\Include\cachel1_armv7.h)(0x699FEEAE)
+I (..\Drivers\CMSIS\Device\ST\STM32H7xx\Include\system_stm32h7xx.h)(0x699FEEAF)
+I (..\Drivers\STM32H7xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h)(0x699FEEAF)
+I (C:\Keil_v5\ARM\ARMCLANG\include\stddef.h)(0x63885718)
+I (C:\Keil_v5\ARM\ARMCLANG\include\math.h)(0x63885718)
+I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc_ex.h)(0x699FEEAF)
+I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_gpio.h)(0x699FEEAF)
+I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_gpio_ex.h)(0x699FEEAF)
+I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_dma.h)(0x699FEEAF)
+I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_dma_ex.h)(0x699FEEAF)
+I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_mdma.h)(0x699FEEAF)
+I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_exti.h)(0x699FEEAF)
+I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_cortex.h)(0x699FEEAF)
+I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_adc.h)(0x699FEEAF)
+I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_adc.h)(0x699FEEAF)
+I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_adc_ex.h)(0x699FEEAF)
+I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_flash.h)(0x699FEEAF)
+I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_flash_ex.h)(0x699FEEAF)
+I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_hsem.h)(0x699FEEAF)
+I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_i2c.h)(0x699FEEAF)
+I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_i2c_ex.h)(0x699FEEAF)
+I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pwr.h)(0x699FEEAF)
+I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pwr_ex.h)(0x699FEEAF)
+I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim.h)(0x699FEEAF)
+I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h)(0x699FEEAF)
+I (..\MDK-ARM\conf.h)(0x69B812CA)
+I (C:\Users\VU VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\arm_math.h)(0x6364736A)
+I (C:\Users\VU VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\arm_math_types.h)(0x6364736A)
+I (C:\Keil_v5\ARM\ARMCLANG\include\string.h)(0x63885718)
+I (C:\Keil_v5\ARM\ARMCLANG\include\float.h)(0x63885718)
+I (C:\Keil_v5\ARM\ARMCLANG\include\limits.h)(0x63885718)
+I (C:\Users\VU VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\arm_math_memory.h)(0x6364736A)
+I (C:\Users\VU VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\dsp\none.h)(0x6364736A)
+I (C:\Users\VU VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\dsp\utils.h)(0x6364736A)
+I (C:\Users\VU VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\dsp\basic_math_functions.h)(0x6364736A)
+I (C:\Users\VU VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\dsp\interpolation_functions.h)(0x6364736A)
+I (C:\Users\VU VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\dsp\bayes_functions.h)(0x6364736A)
+I (C:\Users\VU VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\dsp\statistics_functions.h)(0x6364736A)
+I (C:\Users\VU VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\dsp\fast_math_functions.h)(0x6364736A)
+I (C:\Users\VU VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\dsp\matrix_functions.h)(0x6364736A)
+I (C:\Users\VU VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\dsp\complex_math_functions.h)(0x6364736A)
+I (C:\Users\VU VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\dsp\controller_functions.h)(0x6364736A)
+I (C:\Users\VU VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\dsp\support_functions.h)(0x6364736A)
+I (C:\Users\VU VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\dsp\distance_functions.h)(0x6364736A)
+I (C:\Users\VU VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\dsp\svm_functions.h)(0x6364736A)
+I (C:\Users\VU VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\dsp\svm_defines.h)(0x6364736A)
+I (C:\Users\VU VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\dsp\transform_functions.h)(0x6364736A)
+I (C:\Users\VU VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\dsp\filtering_functions.h)(0x6364736A)
+I (C:\Users\VU VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\dsp\quaternion_math_functions.h)(0x6364736A)
 F (C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/Source/BasicMathFunctions/BasicMathFunctions.c)(0x6364736A)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-D__MICROLIB -gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../MDK-ARM -I ../Core/Src-I./RTE/_GPIO-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/ComputeGraph/cg/static/nodes/cpp"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/ComputeGraph/cg/static/src"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/Include"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS-DSP/1.14.2/PrivateInclude"-I"C:/Users/VU VIET/AppData/Local/Arm/Packs/ARM/CMSIS/5.9.0/CMSIS/Core/Include"-D__UVISION_VERSION="538" -D_RTE_ -DSTM32H723xx -D_RTE_ -DUSE_PWR_LDO_SUPPLY -DUSE_HAL_DRIVER -DSTM32H723xx-o gpio/basicmathfunctions.o -MD)
 I (C:\Users\VU VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Source\BasicMathFunctions\arm_abs_f32.c)(0x6364736A)
 I (C:\Users\VU VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\dsp\basic_math_functions.h)(0x6364736A)

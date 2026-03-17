@@ -18,13 +18,13 @@
 
 /* ===================== ADC Configuration ===================== */
 #ifndef ADC_VREF
-#define ADC_VREF                3.3f        /* ADC reference voltage (V) – adjust per board */
+#define ADC_VREF                3.3f        /* ADC reference voltage (V) ? adjust per board */
 #endif
 #define ADC_RESOLUTION           65536.0f    /* 16-bit ADC */
 
 /* ===================== Conversion Formula ===================== */
-/* From V_ADC = 1.44 - 0.18 * I_P  =>  I_P = (1.44 - V_ADC) / 0.18 */
-#define LA25NP_V_TO_I(v)        ((1.44f - (v)) / 0.18f)
+/* From V_ADC = 1/2(120*0.003*Ip + Voffset )  =>  I_P */
+#define LA25NP_V_TO_I(v)        ( (2*(v)) + LA25NP_VOFFSET )/ (-LA25NP_RM * LA25NP_TURNS_RATIO)
 
 /* Real-world calibration (if needed) */
 #define LA25NP_OFFSET_CALIB      0.0f        /* A */
@@ -34,5 +34,6 @@
 void ADC_Driver_Init(void);
 float ADC_Driver_GetCurrents_1(void);
 float ADC_Driver_GetCurrents_2(void);
+float ADC_Driver_GetCurrents_3(void);
 
 #endif

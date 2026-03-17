@@ -8,6 +8,7 @@
 
 #include "main.h"
 #include "conf.h"
+#include "tim.h"
 #include <stdint.h>
 #include <stdbool.h>
 #include <math.h>

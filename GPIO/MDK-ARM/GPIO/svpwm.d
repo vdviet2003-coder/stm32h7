@@ -1,4 +1,4 @@
-gpio/svpwm.o: svpwm.c ..\Core\Inc\main.h \
+gpio/svpwm.o: svpwm.c ..\MDK-ARM\svpwm.h ..\Core\Inc\main.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
   ..\Core\Inc\stm32h7xx_hal_conf.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h \
@@ -10,9 +10,8 @@ gpio/svpwm.o: svpwm.c ..\Core\Inc\main.h \
   ..\Drivers\CMSIS\Include\cmsis_version.h \
   ..\Drivers\CMSIS\Include\cmsis_compiler.h \
   ..\Drivers\CMSIS\Include\cmsis_armclang.h \
-  C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\arm_compat.h \
-  C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\arm_acle.h \
   ..\Drivers\CMSIS\Include\mpu_armv7.h \
+  ..\Drivers\CMSIS\Include\cachel1_armv7.h \
   ..\Drivers\CMSIS\Device\ST\STM32H7xx\Include\system_stm32h7xx.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h \
   C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stddef.h \
@@ -25,6 +24,9 @@ gpio/svpwm.o: svpwm.c ..\Core\Inc\main.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_mdma.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_exti.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_cortex.h \
+  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_adc.h \
+  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_adc.h \
+  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_adc_ex.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_flash.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_flash_ex.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_hsem.h \
@@ -34,6 +36,7 @@ gpio/svpwm.o: svpwm.c ..\Core\Inc\main.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pwr_ex.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h \
+  ..\MDK-ARM\conf.h \
   C:\Users\VU\ VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\arm_math.h \
   C:\Users\VU\ VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\arm_math_types.h \
   C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\string.h \
@@ -56,7 +59,4 @@ gpio/svpwm.o: svpwm.c ..\Core\Inc\main.h \
   C:\Users\VU\ VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\dsp\svm_defines.h \
   C:\Users\VU\ VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\dsp\transform_functions.h \
   C:\Users\VU\ VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\dsp\filtering_functions.h \
-  C:\Users\VU\ VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\dsp\quaternion_math_functions.h \
-  C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdbool.h \
-  C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdio.h \
-  C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdlib.h
+  C:\Users\VU\ VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\dsp\quaternion_math_functions.h

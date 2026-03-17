@@ -5,8 +5,7 @@
   */
 
 #include "sensor.h"
-#include "tim.h"
-#include <stdio.h>  // for printf (if using UART)
+
 
 static float dt;  /*!< Time between velocity updates (s)  */
 

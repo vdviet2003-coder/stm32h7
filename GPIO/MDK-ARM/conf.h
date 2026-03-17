@@ -13,7 +13,7 @@
 #define POLE_PAIRS                  4.0f
 
 /* ===================== PWM and control loop frequencies ================ */
-#define MOTOR_PWM_FREQ              40000   /*!< PWM frequency (Hz) */
+#define MOTOR_PWM_FREQ              16000   /*!< PWM frequency (Hz) */
 #define MOTOR_SPEED_CALC_FREQ       10000   /*!< Speed calculation frequency (Hz)  */
 
 /* ===================== Encoder (ABZ) specifications ==================== */
@@ -69,17 +69,34 @@
 #define TIM_Z                       htim23      /*!< Timer for Z pulse (index) */
 #define TIM_SENSOR_SAMPLE           htim5       /*!< Periodic update timer (velocity) */
 #define TIM_CURRENT                 htim6 
+#define TIM_SVPWM										htim1
+
+/* ===================== Configuration ===================== */
+#ifndef VDC_BUS
+#define VDC_BUS 35.0f   /* DC bus voltage (Volts) – adjust to your hardware */
+#endif
 
 /* ===================== Math constants ================================== */
 #ifndef M_PI
 #define M_PI 3.14159265358979323846f
 #endif
+
+#ifndef SQRT3
+#define SQRT3  1.7320508075688772f
+#endif
+
+#ifndef INV_SQRT3
+#define INV_SQRT3        0.5773502691896258f
+#endif
+
 #ifndef M_2PI
 #define M_2PI (2.0f * M_PI)
 #endif
+
 #ifndef DEG_TO_RAD
 #define DEG_TO_RAD(deg) ((deg) * (M_PI / 180.0f))
 #endif
+
 #ifndef RAD_TO_DEG
 #define RAD_TO_DEG(rad) ((rad) * (180.0f / M_PI))
 #endif
