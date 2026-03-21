@@ -19,7 +19,9 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "adc.h"
+#include "dma.h"
 #include "tim.h"
+#include "usart.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -31,11 +33,18 @@
 #include "string.h"
 #include "sensor.h"
 #include "adc_driver.h"
-//#include "svpwm.h"
+#include "svpwm.h"
+#include "uart_dma_lib.h"
+#include "pid.h"
+#include "foc_transform.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
+/*PID*/
+PID_HandleTypeDef pid_speed;
+PID_HandleTypeDef pid_curent;
 
 /* USER CODE END PTD */
 
@@ -58,25 +67,13 @@ float mech_angle_rad;          /* Mechanical angle (rad) */
 float velocity_rads;           /* Angular velocity (rad/s) */
 uint8_t hall_step;             /* Current Hall step (1..6) */
 uint16_t z_counter;             /* Z pulse counter */
-
 uint32_t max_count;
 /* Current measurement variables */
-float i1, i2;                   /* Phase A, B currents (A) */
+float i1, i2,i3;                  /* Phase A, B,C currents (A) */
 float i_alpha, i_beta;          /* Stationary frame currents */
 float i_d, i_q;                  /* Rotating frame currents */
-
-/* Voltage commands (from PI controllers) */
-float agl ; // // degree
-float agl_radian ; // rad
-float Tperiod = MOTOR_PWM_FREQ ; //hz
-float Vd = 0.0f;
-float Vq = 5.0f;
-float Vdc = 35.0f;
-float Valpha , Vbeta , Vref ;
-float Ta = 0.0f, Tb = 0.0f, T0 = 0.0f, T1 = 0.0f, T2 = 0.0f;
-float u = 0.0f, v = 0.0f, w = 0.0f, g = 0.0f;
-float Tsw1 = 0.0f, Tsw2 = 0.0f, Tsw3 = 0.0f;
-uint8_t s;
+int cnt = 0;
+/*PID*/
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -87,62 +84,65 @@ static void MPU_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-void SVPWM(float Angle_radian)
-{
-    //Angle_radian = Angle * (Pi / 180.0f);
-    Valpha = arm_cos_f32(Angle_radian) * Vd - arm_sin_f32(Angle_radian) * Vq;
-    Vbeta  = arm_sin_f32(Angle_radian) * Vd + arm_cos_f32(Angle_radian) * Vq;
-    arm_sqrt_f32(((Valpha * Valpha) + (Vbeta * Vbeta)), &Vref);
-    agl_radian = atan2f(Vbeta, Valpha);
-    agl = agl_radian * (180.0f / M_PI);
-
-    if (agl >= 0 && agl < 60)       s = 1;
-    else if (agl >= 60 && agl < 120)  s = 2;
-    else if (agl >= 120 && agl < 180) s = 3;
-    else if (agl >= -180 && agl < -120) s = 4;
-    else if (agl >= -120 && agl < -60)  s = 5;
-    else if (agl >= -60 && agl < 0)     s = 6;
-    else s = 0;
-
-    Ta = T1 = (Tperiod * sqrtf(3.0f) / Vdc) * Vref * sinf((M_PI * s / 3.0f) - agl_radian);
-    Tb = T2 = (Tperiod * sqrtf(3.0f) / Vdc) * Vref * sinf(agl_radian - ((s - 1) * M_PI / 3.0f));
-    T0 = Tperiod - Ta - Tb;
-
-    u = Tperiod - T0 / 2.0f;
-    v = (T0 / 2.0f) + T2;
-    w = T0 / 2.0f;
-    g = (T0 / 2.0f) + T1;
-
-    switch (s)
-    {
-        case 0: Tsw1 = 0; Tsw2 = 0; Tsw3 = 0; break;
-        case 1: Tsw1 = u; Tsw2 = v; Tsw3 = w; break;
-        case 2: Tsw1 = g; Tsw2 = u; Tsw3 = w; break;
-        case 3: Tsw1 = w; Tsw2 = u; Tsw3 = v; break;
-        case 4: Tsw1 = w; Tsw2 = g; Tsw3 = u; break;
-        case 5: Tsw1 = v; Tsw2 = w; Tsw3 = u; break;
-        case 6: Tsw1 = u; Tsw2 = w; Tsw3 = g; break;
-    }
-
-    max_count = htim1.Init.Period;
-    TIM1->CCR1 = (uint32_t)(Tsw1*max_count/MOTOR_PWM_FREQ); // tam dien thuan 
-    TIM1->CCR2 = (uint32_t)(Tsw2*max_count/MOTOR_PWM_FREQ);
-    TIM1->CCR3 = (uint32_t)(Tsw3*max_count/MOTOR_PWM_FREQ);
-}
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
     if (htim->Instance == TIM3)
 		{
+			
+/*														|-----------------|
+			|----------------|			|							uPos|
+			|Vq							 |			|							uNeg|
+			|					 Valpha|----> |Valpha 			vPos|
+			|Vd							 | 			|							vNeg|
+			|					  Vbeta|---->	|Vbeta				wPos|
+			|Angle 					 |			|							wNeg|
+			|----------------|			|-----------------|
+			*/
+/*
+ * FOC (Field Oriented Control) DIAGRAM FOR PMSM MOTOR
+ * ------------------------------------------------------------
+ * Control flow from left to right:
+ */
+/*
+ 1. SPEED AND CURRENT CONTROL BLOCKS (Outer & Inner Loops)
+    - PI Speed Control: Generates the reference current (Iq_ref).
+    - Id (Constant): d-axis reference current (Id_ref), typically set to 0.
+    - PI Iq Control & PI Id Control: Compares actual currents with references
+      to generate control voltages (Vd, Vq).*/
+/*
+ 2. INVERSE PARK TRANSFORMATION BLOCK
+    - Inputs: Vd, Vq, and Rotor Angle.
+    - Function: Converts voltages from the rotating reference frame (d-q) 
+      to the stationary reference frame (alpha-beta).*/
+/*
+ 3. SVPWM CONTROLLER BLOCK (Space Vector Pulse Width Modulation)
+    - Inputs: Valfa, Vbeta.
+    - Function: Generates gate signals (uPos, uNeg, vPos, vNeg, wPos, wNeg)
+      to drive the power semiconductor switches.*/
+/*
+ 4. POWER STAGE AND MOTOR BLOCKS (Plant)
+    - 6-Mosfet: 3-phase Inverter bridge that converts DC to AC.
+    - PMSM: The motor receives Vabc voltage and produces speed (Me_Speed).*/
+/*
+ 5. FEEDBACK LOOP BLOCKS
+    - Clark Transform: Converts 3-phase currents (Iabc) into 2-phase 
+      stationary currents (Ialfa, Ibeta).
+    - Park Transform: Converts (Ialfa, Ibeta) to the rotating reference 
+      frame (Id, Iq) based on the rotor angle.
+    - Feedback: Id and Iq are fed back to the controllers to close the loop.*/
+		
 				HAL_GPIO_WritePin(GPIOF, GPIO_PIN_9, GPIO_PIN_SET);
         elec_angle_rad = Sensor_GetElectricalAngle();     // Electrical angle (rad) for Park transform
         mech_angle_rad = Sensor_GetMechanicalAngle();     // Mechanical angle (rad)
-        velocity_rads  = Sensor_GetVelocity();            // Angular velocity (rad/s)
         hall_step      = Hall_GetStep();                  // Current Hall step (1..6)
         z_counter      = ReadZ();
 				i1 = ADC_Driver_GetCurrents_1();
 			  i2 = ADC_Driver_GetCurrents_2();
-				SVPWM(elec_angle_rad);
+				i3 = ADC_Driver_GetCurrents_3();
+				FOC_Clarke(i1,i2,i3,&i_alpha,&i_beta);
+				FOC_Park(i_alpha,i_beta,elec_angle_rad,&i_d,&i_q);
+				SVPWM_Update(elec_angle_rad);
 				HAL_GPIO_WritePin(GPIOF, GPIO_PIN_9, GPIO_PIN_RESET);
 		}
 		else if (htim->Instance == TIM5)
@@ -192,6 +192,7 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_TIM1_Init();
   MX_TIM3_Init();
   MX_TIM2_Init();
@@ -200,22 +201,22 @@ int main(void)
   MX_TIM23_Init();
   MX_ADC1_Init();
   MX_ADC2_Init();
-  MX_TIM6_Init();
+  MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
 		//center-alinge
-    HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
-    HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
-    HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
-    HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_1);
-    HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_2);
-    HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_3);
-		//
+		SVPWM_Init(&htim1, VDC_BUS, (float)MOTOR_PWM_FREQ, htim1.Init.Period);
+		SVPWM_Start();
     HAL_TIM_Base_Start_IT(&htim3);
 		Sensor_Init();
 		HallSensor_Update();
 		//adc//
 		ADC_Driver_Init();
-		
+		// usart
+		MX_USART1_UART_Init();   
+		UART_DMA_Init();   
+		UART_DMA_SendString("UART DMA with IDLE+HT/TC ready\r\n");
+		//pid
+		PID_Init(&pid_curent, 1.0f, 0.5f, 0.1f, 1/MOTOR_SPEED_CALC_FREQ , VDC_BUS/SQRT3, -VDC_BUS/SQRT3);
   /* USER CODE END 2 */
 
   /* Infinite loop */

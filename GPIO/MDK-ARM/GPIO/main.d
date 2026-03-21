@@ -36,8 +36,10 @@ gpio/main.o: ..\Core\Src\main.c ..\Core\Inc\main.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pwr_ex.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h \
-  ..\MDK-ARM\conf.h ..\Core\Inc\adc.h ..\Core\Inc\tim.h \
-  ..\Core\Inc\gpio.h \
+  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart.h \
+  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h \
+  ..\MDK-ARM\conf.h ..\Core\Inc\adc.h ..\Core\Inc\dma.h \
+  ..\Core\Inc\tim.h ..\Core\Inc\usart.h ..\Core\Inc\gpio.h \
   C:\Users\VU\ VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\arm_math.h \
   C:\Users\VU\ VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\arm_math_types.h \
   C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\string.h \
@@ -64,4 +66,5 @@ gpio/main.o: ..\Core\Src\main.c ..\Core\Inc\main.h \
   C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdbool.h \
   C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdio.h \
   C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdlib.h ..\MDK-ARM\sensor.h \
-  ..\MDK-ARM\adc_driver.h
+  ..\MDK-ARM\adc_driver.h ..\MDK-ARM\svpwm.h ..\MDK-ARM\uart_dma_lib.h \
+  ..\MDK-ARM\pid.h ..\MDK-ARM\foc_transform.h

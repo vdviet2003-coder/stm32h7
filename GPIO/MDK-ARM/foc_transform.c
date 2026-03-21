@@ -1,32 +1,48 @@
-/**
-  * @file    foc_transform.c
-  * @brief   Implementation of FOC transforms
-  */
-
 #include "foc_transform.h"
+#include <math.h>
+/* Constants for Clarke and inverse Clarke transforms */
+#define ONE_OVER_SQRT3   0.5773502691896258f  /* 1/v3 */
+#define SQRT3_OVER_2     0.8660254037844386f  /* v3/2 */
 
-#define SQRT3  1.7320508075688772f
-#define INV_SQRT3 0.5773502691896258f
-
-void foc_clark(float i1, float i2, float i3, float *i_alpha, float *i_beta)
+/*----------------------------------------------------------------------------
+ * Clarke transform
+ *----------------------------------------------------------------------------*/
+void FOC_Clarke(float a, float b, float c, float *alpha, float *beta)
 {
-    // Amplitude invariant Clark transform
-    *i_alpha = i1;
-    *i_beta = (i1 + 2.0f * i2) * INV_SQRT3; // i3 = -(i1+i2)
+    *alpha = (2.0f/3.0f) * a - (1.0f/3.0f) * b - (1.0f/3.0f) * c;
+    *beta  = ONE_OVER_SQRT3 * (b - c);
 }
 
-void foc_park(float i_alpha, float i_beta, float theta_rad, float *i_d, float *i_q)
+/*----------------------------------------------------------------------------
+ * Park transform
+ *----------------------------------------------------------------------------*/
+void FOC_Park(float alpha, float beta, float theta, float *d, float *q)
 {
-    float sin_th = arm_sin_f32(theta_rad);
-    float cos_th = arm_cos_f32(theta_rad);
-    *i_d =  cos_th * i_alpha + sin_th * i_beta;
-    *i_q = -sin_th * i_alpha + cos_th * i_beta;
+    float cos_theta = arm_cos_f32(theta);
+    float sin_theta = arm_sin_f32(theta);
+
+    *d =  cos_theta * alpha + sin_theta * beta;
+    *q = -sin_theta * alpha + cos_theta * beta;
 }
 
-void foc_inv_park(float v_d, float v_q, float theta_rad, float *v_alpha, float *v_beta)
+/*----------------------------------------------------------------------------
+ * Inverse Park transform
+ *----------------------------------------------------------------------------*/
+void FOC_InvPark(float d, float q, float theta, float *alpha, float *beta)
 {
-    float sin_th = arm_sin_f32(theta_rad);
-    float cos_th = arm_cos_f32(theta_rad);
-    *v_alpha = cos_th * v_d - sin_th * v_q;
-    *v_beta  = sin_th * v_d + cos_th * v_q;
+    float cos_theta = arm_cos_f32(theta);
+    float sin_theta = arm_sin_f32(theta);
+
+    *alpha = cos_theta * d - sin_theta * q;
+    *beta  = sin_theta * d + cos_theta * q;
+}
+
+/*----------------------------------------------------------------------------
+ * Inverse Clarke transform
+ *----------------------------------------------------------------------------*/
+void FOC_InvClarke(float alpha, float beta, float *a, float *b, float *c)
+{
+    *a = alpha;
+    *b = -0.5f * alpha + SQRT3_OVER_2 * beta;
+    *c = -0.5f * alpha - SQRT3_OVER_2 * beta;
 }

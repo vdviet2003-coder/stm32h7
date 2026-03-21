@@ -23,7 +23,7 @@
 #define ADC_RESOLUTION           65536.0f    /* 16-bit ADC */
 
 /* ===================== Conversion Formula ===================== */
-/* From V_ADC = 1/2(120*0.003*Ip + Voffset )  =>  I_P */
+/* From V_ADC = -1/2(120*0.003*Ip + Voffset )  =>  I_P */
 #define LA25NP_V_TO_I(v)        ( (2*(v)) + LA25NP_VOFFSET )/ (-LA25NP_RM * LA25NP_TURNS_RATIO)
 
 /* Real-world calibration (if needed) */

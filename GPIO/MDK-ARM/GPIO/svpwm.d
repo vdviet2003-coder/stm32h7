@@ -1,5 +1,5 @@
-gpio/svpwm.o: svpwm.c ..\MDK-ARM\svpwm.h ..\Core\Inc\main.h \
-  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
+gpio/svpwm.o: svpwm.c ..\MDK-ARM\svpwm.h ..\Core\Inc\tim.h \
+  ..\Core\Inc\main.h ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
   ..\Core\Inc\stm32h7xx_hal_conf.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_def.h \
@@ -36,6 +36,8 @@ gpio/svpwm.o: svpwm.c ..\MDK-ARM\svpwm.h ..\Core\Inc\main.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pwr_ex.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h \
+  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart.h \
+  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h \
   ..\MDK-ARM\conf.h \
   C:\Users\VU\ VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\arm_math.h \
   C:\Users\VU\ VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\arm_math_types.h \
@@ -59,4 +61,5 @@ gpio/svpwm.o: svpwm.c ..\MDK-ARM\svpwm.h ..\Core\Inc\main.h \
   C:\Users\VU\ VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\dsp\svm_defines.h \
   C:\Users\VU\ VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\dsp\transform_functions.h \
   C:\Users\VU\ VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\dsp\filtering_functions.h \
-  C:\Users\VU\ VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\dsp\quaternion_math_functions.h
+  C:\Users\VU\ VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\dsp\quaternion_math_functions.h \
+  ..\MDK-ARM\foc_transform.h

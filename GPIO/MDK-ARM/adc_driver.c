@@ -62,6 +62,6 @@ float ADC_Driver_GetCurrents_2(void)
 }
 float ADC_Driver_GetCurrents_3(void)
 {
-    current_i3 = -current_i1 - current_i2;
+    current_i3 = -(current_i1 + current_i2);
     return  current_i3 ;
 }

@@ -20,7 +20,6 @@
  */
 typedef struct {
     float angle_mech;       /* Mechanical angle in [0, 2p) [rad]  */
-    float velocity;         /* Angular velocity [rad/s]  */
     bool  index_found;      /* Z pulse detected? */
 } Sensor_t;
 
@@ -62,17 +61,12 @@ float Sensor_GetElectricalAngle(void);
 /* Góc co trong m?t vòng [0, 2pi) */
 float Sensor_GetMechanicalAngle(void);
 
-/* V?n t?c góc (rad/s) */
-float Sensor_GetVelocity(void);
-
-/* V? trí tuy?t d?i (rad), không wrap – có th? l?n hon 2p */
-float Sensor_GetAbsolutePosition(void);
-
 /* Bu?c Hall hi?n t?i (1..6) */
 uint8_t Hall_GetStep(void);
 
-/* Debug functions – Hàm debug (có th? d?nh nghia sau) */
-void Sensor_PrintHallStatus(void);
-void Sensor_PrintEncoderStatus(void);
-
 #endif /* SENSOR_H_ */
+/**
+  * @file    sensor.c
+  * @brief   Implementation of combined Hall + Encoder sensor
+  *          Tri?n khai c?m bi?n Hall + Encoder
+  */

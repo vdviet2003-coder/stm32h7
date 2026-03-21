@@ -1,144 +1,107 @@
-/**
-  * @file    svpwm.c
-  * @brief   Implementation of SVPWM (exact algorithm from your main.c)
-  */
-
 #include "svpwm.h"
-#include "conf.h"   // for M_PI, SQRT3 if needed, but we define constants here
+#include "foc_transform.h"
 
-#ifndef M_PI
-#define M_PI 3.14159265358979323846f
-#endif
+/* Internal static variables */
+static TIM_HandleTypeDef *tim1_handle = NULL;
+static float Vdc = VDC_BUS;           /* DC bus voltage */
+static float Tperiod = 16000.0f;     /* Tperiod (same as MOTOR_PWM_FREQ) */
+static uint32_t max_count = 0;       /* Timer period (auto-reload value) */
 
-#ifndef SQRT3
-#define SQRT3 1.7320508075688772f
-#endif
+static float Vd = 0.0f;              /* d-axis voltage command */
+static float Vq = 5.0f;              /* q-axis voltage command */
 
-/* Private function: determine sector from angle (radians) using degree conversion */
-static uint8_t get_sector_from_angle_deg(float angle_deg)
+/* Intermediate variables (kept as in original code) */
+static float agl, agl_radian;
+static float Valpha, Vbeta, Vref;
+static float Ta, Tb, T0, T1, T2;
+static float u, v, w, g;
+static float Tsw1, Tsw2, Tsw3;
+static uint8_t sector;                /* Current sector 1..6 */
+
+/*----------------------------------------------------------------------------
+ * SVPWM calculation – identical to original algorithm
+ *----------------------------------------------------------------------------*/
+static void SVPWM_Calculate(float Angle_radian)
 {
-    if (angle_deg >= 0 && angle_deg < 60)        return 1;
-    else if (angle_deg >= 60 && angle_deg < 120) return 2;
-    else if (angle_deg >= 120 && angle_deg < 180) return 3;
-    else if (angle_deg >= -180 && angle_deg < -120) return 4;
-    else if (angle_deg >= -120 && angle_deg < -60)  return 5;
-    else if (angle_deg >= -60 && angle_deg < 0)     return 6;
-    else return 0;
-}
+    /* dq to alpha-beta transformation */
+    //Valpha = arm_cos_f32(Angle_radian) * Vd - arm_sin_f32(Angle_radian) * Vq;
+   //Vbeta  = arm_sin_f32(Angle_radian) * Vd + arm_cos_f32(Angle_radian) * Vq;
+		FOC_InvPark(Vd, Vq, Angle_radian, &Valpha ,&Vbeta);
+    arm_sqrt_f32(Valpha * Valpha + Vbeta * Vbeta, &Vref);
+    arm_atan2_f32(Vbeta, Valpha, &agl_radian);
+    agl = agl_radian * (180.0f / M_PI);
 
-void SVPWM_Init(SVPWM_HandleTypeDef *hsvpwm, float vdc, float tperiod)
-{
-    hsvpwm->vd = 0.0f;
-    hsvpwm->vq = 0.0f;
-    hsvpwm->angle_deg = 0.0f;
-    hsvpwm->vdc = vdc;
-    hsvpwm->tperiod = tperiod;
+    /* Determine sector */
+    if (agl >= 0 && agl < 60)       sector = 1;
+    else if (agl >= 60 && agl < 120) sector = 2;
+    else if (agl >= 120 && agl < 180) sector = 3;
+    else if (agl >= -180 && agl < -120) sector = 4;
+    else if (agl >= -120 && agl < -60) sector = 5;
+    else if (agl >= -60 && agl < 0) sector = 6;
+    else sector = 0;
 
-    hsvpwm->valpha = 0.0f;
-    hsvpwm->vbeta = 0.0f;
-    hsvpwm->vref = 0.0f;
-    hsvpwm->angle_rad = 0.0f;
-    hsvpwm->sector = 0;
-    hsvpwm->t1 = hsvpwm->t2 = hsvpwm->t0 = 0.0f;
-    hsvpwm->tsw1 = hsvpwm->tsw2 = hsvpwm->tsw3 = 0.0f;
-}
+    /* Calculate active vector times */
+    Ta = T1 = (Tperiod * SQRT3 / Vdc) * Vref * sinf((M_PI * sector / 3.0f) - agl_radian);
+    Tb = T2 = (Tperiod * SQRT3 / Vdc) * Vref * sinf(agl_radian - ((sector - 1) * M_PI / 3.0f));
+    T0 = Tperiod - Ta - Tb;
 
-void SVPWM_SetTarget(SVPWM_HandleTypeDef *hsvpwm, float vd, float vq, float angle_deg)
-{
-    hsvpwm->vd = vd;
-    hsvpwm->vq = vq;
-    hsvpwm->angle_deg = angle_deg;
-}
+    /* Compute switching times for center-aligned PWM */
+    u = Tperiod - T0 / 2.0f;
+    v = (T0 / 2.0f) + T2;
+    w = T0 / 2.0f;
+    g = (T0 / 2.0f) + T1;
 
-void SVPWM_Update(SVPWM_HandleTypeDef *hsvpwm)
-{
-    float angle_rad, sin_th, cos_th;
-    float v_alpha, v_beta, vref;
-    float agl_rad, agl_deg;
-    float Tp = hsvpwm->tperiod;
-    float Vdc = hsvpwm->vdc;
-    float sqrt3 = SQRT3;
-    float t1, t2, t0;
-    float u, v, w, g;
-    uint8_t sector;
-
-    /* 1. Inverse Park transform (dq -> aß) */
-    angle_rad = hsvpwm->angle_deg * (M_PI / 180.0f);
-    arm_sin_cos_f32(angle_rad, &sin_th, &cos_th);
-    v_alpha = cos_th * hsvpwm->vd - sin_th * hsvpwm->vq;
-    v_beta  = sin_th * hsvpwm->vd + cos_th * hsvpwm->vq;
-
-    /* 2. Compute reference magnitude and angle */
-    arm_sqrt_f32(v_alpha * v_alpha + v_beta * v_beta, &vref);
-    agl_rad = atan2f(v_beta, v_alpha);
-    agl_deg = agl_rad * (180.0f / M_PI);
-
-    /* 3. Determine sector */
-    sector = get_sector_from_angle_deg(agl_deg);
-
-    /* 4. Calculate T1, T2 (times in seconds) exactly as in your code */
-    float k = Tp * sqrt3 / Vdc * vref;
-    t1 = k * arm_sin_f32((M_PI * sector / 3.0f) - agl_rad);
-    t2 = k * arm_sin_f32(agl_rad - ((sector - 1) * M_PI / 3.0f));
-
-    /* 5. Handle overmodulation (if t1 + t2 > Tp) */
-    if (t1 + t2 > Tp) {
-        float scale = Tp / (t1 + t2);
-        t1 *= scale;
-        t2 *= scale;
-    }
-    t0 = Tp - t1 - t2;
-
-    /* 6. Compute u, v, w, g */
-    u = Tp - t0 * 0.5f;
-    v = t0 * 0.5f + t2;
-    w = t0 * 0.5f;
-    g = t0 * 0.5f + t1;
-
-    /* 7. Assign switching times according to sector */
+    /* Assign phase times based on sector */
     switch (sector)
     {
-        case 0:
-            hsvpwm->tsw1 = 0; hsvpwm->tsw2 = 0; hsvpwm->tsw3 = 0; break;
-        case 1:
-            hsvpwm->tsw1 = u; hsvpwm->tsw2 = v; hsvpwm->tsw3 = w; break;
-        case 2:
-            hsvpwm->tsw1 = g; hsvpwm->tsw2 = u; hsvpwm->tsw3 = w; break;
-        case 3:
-            hsvpwm->tsw1 = w; hsvpwm->tsw2 = u; hsvpwm->tsw3 = v; break;
-        case 4:
-            hsvpwm->tsw1 = w; hsvpwm->tsw2 = g; hsvpwm->tsw3 = u; break;
-        case 5:
-            hsvpwm->tsw1 = v; hsvpwm->tsw2 = w; hsvpwm->tsw3 = u; break;
-        case 6:
-            hsvpwm->tsw1 = u; hsvpwm->tsw2 = w; hsvpwm->tsw3 = g; break;
-        default:
-            hsvpwm->tsw1 = hsvpwm->tsw2 = hsvpwm->tsw3 = 0; break;
+        case 0: Tsw1 = 0; Tsw2 = 0; Tsw3 = 0; break;
+        case 1: Tsw1 = u; Tsw2 = v; Tsw3 = w; break;
+        case 2: Tsw1 = g; Tsw2 = u; Tsw3 = w; break;
+        case 3: Tsw1 = w; Tsw2 = u; Tsw3 = v; break;
+        case 4: Tsw1 = w; Tsw2 = g; Tsw3 = u; break;
+        case 5: Tsw1 = v; Tsw2 = w; Tsw3 = u; break;
+        case 6: Tsw1 = u; Tsw2 = w; Tsw3 = g; break;
     }
 
-    /* Save intermediate values for debugging */
-    hsvpwm->valpha = v_alpha;
-    hsvpwm->vbeta = v_beta;
-    hsvpwm->vref = vref;
-    hsvpwm->angle_rad = agl_rad;
-    hsvpwm->sector = sector;
-    hsvpwm->t1 = t1;
-    hsvpwm->t2 = t2;
-    hsvpwm->t0 = t0;
+    /* Write compare values to TIM1 CCR registers – same formula as original */
+    if (max_count != 0 && tim1_handle != NULL)
+    {
+        TIM1->CCR1 = (uint32_t)(Tsw1 * max_count / Tperiod);
+        TIM1->CCR2 = (uint32_t)(Tsw2 * max_count / Tperiod);
+        TIM1->CCR3 = (uint32_t)(Tsw3 * max_count / Tperiod);
+    }
 }
 
-void SVPWM_Apply(SVPWM_HandleTypeDef *hsvpwm, TIM_HandleTypeDef *htim)
+/*----------------------------------------------------------------------------
+ * Public functions
+ *----------------------------------------------------------------------------*/
+void SVPWM_Init(TIM_HandleTypeDef *htim, float vdc, float tperiod, uint32_t period_count)
 {
-    uint32_t period = htim->Init.Period;
-    float inv_Tp = 1.0f / hsvpwm->tperiod;
+    tim1_handle = htim;
+    Vdc = vdc;
+    Tperiod = tperiod;
+    max_count = period_count;
+}
 
-    /* Convert switching times to timer compare values */
-    uint32_t ccr1 = (uint32_t)((hsvpwm->tsw1 * inv_Tp) * period);
-    uint32_t ccr2 = (uint32_t)((hsvpwm->tsw2 * inv_Tp) * period);
-    uint32_t ccr3 = (uint32_t)((hsvpwm->tsw3 * inv_Tp) * period);
+void SVPWM_SetVoltage(float vd, float vq)
+{
+    Vd = vd;
+    Vq = vq;
+}
 
-    /* Update timer compare registers (assuming TIM1) */
-    TIM1->CCR1 = ccr1;
-    TIM1->CCR2 = ccr2;
-    TIM1->CCR3 = ccr3;
+void SVPWM_Update(float angle_radian)
+{
+    if (tim1_handle == NULL) return;
+    SVPWM_Calculate(angle_radian);
+}
+
+void SVPWM_Start(void)
+{
+    if (tim1_handle == NULL) return;
+    HAL_TIM_PWM_Start(tim1_handle, TIM_CHANNEL_1);
+    HAL_TIM_PWM_Start(tim1_handle, TIM_CHANNEL_2);
+    HAL_TIM_PWM_Start(tim1_handle, TIM_CHANNEL_3);
+    HAL_TIMEx_PWMN_Start(tim1_handle, TIM_CHANNEL_1);
+    HAL_TIMEx_PWMN_Start(tim1_handle, TIM_CHANNEL_2);
+    HAL_TIMEx_PWMN_Start(tim1_handle, TIM_CHANNEL_3);
 }

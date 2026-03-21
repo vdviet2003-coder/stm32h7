@@ -1,9 +1,3 @@
-/**
-  * @file    sensor.c
-  * @brief   Implementation of combined Hall + Encoder sensor
-  *          Tri?n khai c?m bi?n Hall + Encoder
-  */
-
 #include "sensor.h"
 
 
@@ -104,10 +98,6 @@ static void Encoder_Update_Internal(void)
     encoder_sensor.delta = delta;
     encoder_sensor.counts += delta;
     encoder_sensor.last_cnt = cnt;
-
-    // Velocity: (delta / counts_per_rev) * (2p) / dt
-    sensor.velocity = ((float)delta / ENCODER_COUNTS_PER_REV) * M_2PI / dt;
-
     // Z pulse (index) detection
     encoder_sensor.z_cnt = __HAL_TIM_GET_COUNTER(&TIM_Z);
     if (!sensor.index_found && (encoder_sensor.z_cnt != encoder_sensor.last_z_cnt))
@@ -164,7 +154,7 @@ void Sensor_Init(void)
     encoder_sensor.last_cnt = __HAL_TIM_GET_COUNTER(&TIM_ENCODER);
     sensor.index_found = false;
     sensor.angle_mech = 0.0f;
-    sensor.velocity = 0.0f;
+
 }
 
 void EncoderSensor_Update(void)
@@ -196,36 +186,9 @@ float Sensor_GetMechanicalAngle(void)
     return sensor.angle_mech;
 }
 
-float Sensor_GetVelocity(void)
-{
-    return sensor.velocity;
-}
-
-float Sensor_GetAbsolutePosition(void)
-{
-    if (!sensor.index_found) {
-        // Chua có Z: không th? bi?t v? trí tuy?t d?i, tr? v? 0 ho?c d?a trên counts tuong d?i
-        return 0.0f;   // Có th? thay b?ng (float)encoder_sensor.counts / ENCODER_COUNTS_PER_REV * M_2PI;
-    }
-
-    // Absolute position = (counts - z_counts) * (2p/cpr) + Z_PULSE_OFFSET_RAD
-    int64_t rel_counts = encoder_sensor.counts - encoder_sensor.z_counts;
-    float pos = ((float)rel_counts / ENCODER_COUNTS_PER_REV) * M_2PI + Z_PULSE_OFFSET_RAD;
-    return pos;   // Không wrap, có th? l?n hon 2p
-}
 
 uint8_t Hall_GetStep(void)
 {
     return hall_sensor.step;
 }
 
-/* ===================== Optional debug functions ========================= */
-void Sensor_PrintHallStatus(void)
-{
-    // Implement if needed (e.g., over UART)
-}
-
-void Sensor_PrintEncoderStatus(void)
-{
-    // Implement if needed
-}
