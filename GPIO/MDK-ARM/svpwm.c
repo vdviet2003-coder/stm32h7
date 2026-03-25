@@ -7,8 +7,6 @@ static float Vdc = VDC_BUS;           /* DC bus voltage */
 static float Tperiod = 16000.0f;     /* Tperiod (same as MOTOR_PWM_FREQ) */
 static uint32_t max_count = 0;       /* Timer period (auto-reload value) */
 
-static float Vd = 0.0f;              /* d-axis voltage command */
-static float Vq = 5.0f;              /* q-axis voltage command */
 
 /* Intermediate variables (kept as in original code) */
 static float agl, agl_radian;
@@ -21,12 +19,8 @@ static uint8_t sector;                /* Current sector 1..6 */
 /*----------------------------------------------------------------------------
  * SVPWM calculation – identical to original algorithm
  *----------------------------------------------------------------------------*/
-static void SVPWM_Calculate(float Angle_radian)
+static void SVPWM_Calculate(float Valpha,float Vbeta  )
 {
-    /* dq to alpha-beta transformation */
-    //Valpha = arm_cos_f32(Angle_radian) * Vd - arm_sin_f32(Angle_radian) * Vq;
-   //Vbeta  = arm_sin_f32(Angle_radian) * Vd + arm_cos_f32(Angle_radian) * Vq;
-		FOC_InvPark(Vd, Vq, Angle_radian, &Valpha ,&Vbeta);
     arm_sqrt_f32(Valpha * Valpha + Vbeta * Vbeta, &Vref);
     arm_atan2_f32(Vbeta, Valpha, &agl_radian);
     agl = agl_radian * (180.0f / M_PI);
@@ -83,16 +77,11 @@ void SVPWM_Init(TIM_HandleTypeDef *htim, float vdc, float tperiod, uint32_t peri
     max_count = period_count;
 }
 
-void SVPWM_SetVoltage(float vd, float vq)
-{
-    Vd = vd;
-    Vq = vq;
-}
 
-void SVPWM_Update(float angle_radian)
+void SVPWM_Update(float Valpha,float Vbeta )
 {
     if (tim1_handle == NULL) return;
-    SVPWM_Calculate(angle_radian);
+    SVPWM_Calculate( Valpha, Vbeta );
 }
 
 void SVPWM_Start(void)

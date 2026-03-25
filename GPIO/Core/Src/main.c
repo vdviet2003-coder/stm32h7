@@ -69,9 +69,10 @@ uint8_t hall_step;             /* Current Hall step (1..6) */
 uint16_t z_counter;             /* Z pulse counter */
 uint32_t max_count;
 /* Current measurement variables */
-float i1, i2,i3;                  /* Phase A, B,C currents (A) */
-float i_alpha, i_beta;          /* Stationary frame currents */
-float i_d, i_q;                  /* Rotating frame currents */
+float i1, i2,i3;                  								 /* Phase A, B,C currents (A) */
+float i_alpha, i_beta , v_alpha , v_beta;          /* Stationary frame currents */
+float i_d = 0 , i_q = 0 , i_q_ref = 0;             /* Rotating frame currents */
+float v_d = 0 , v_q = -5.0f;
 int cnt = 0;
 /*PID*/
 /* USER CODE END PV */
@@ -87,7 +88,7 @@ static void MPU_Config(void);
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-    if (htim->Instance == TIM3)
+    if (htim->Instance == TIM5)
 		{
 			
 /*														|-----------------|
@@ -140,14 +141,16 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 				i1 = ADC_Driver_GetCurrents_1();
 			  i2 = ADC_Driver_GetCurrents_2();
 				i3 = ADC_Driver_GetCurrents_3();
-				FOC_Clarke(i1,i2,i3,&i_alpha,&i_beta);
-				FOC_Park(i_alpha,i_beta,elec_angle_rad,&i_d,&i_q);
-				SVPWM_Update(elec_angle_rad);
-				HAL_GPIO_WritePin(GPIOF, GPIO_PIN_9, GPIO_PIN_RESET);
+				
+				FOC_InvPark(v_q,v_d,elec_angle_rad,&v_alpha,&v_beta);
+				SVPWM_Update(v_alpha,v_beta);
+				
+
 		}
-		else if (htim->Instance == TIM5)
+		else if (htim->Instance == TIM3)
 		{
 			EncoderSensor_Update();
+			velocity_rads = (float)encoder_sensor.delta / ENCODER_COUNTS_PER_REV * M_2PI * MOTOR_SPEED_CALC_FREQ;
 		}
 }
 void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)

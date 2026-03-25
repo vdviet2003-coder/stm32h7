@@ -14,7 +14,7 @@
 
 /* ===================== PWM and control loop frequencies ================ */
 #define MOTOR_PWM_FREQ              16000   /*!< PWM frequency (Hz) */
-#define MOTOR_SPEED_CALC_FREQ       10000   /*!< Speed calculation frequency (Hz)  */
+#define MOTOR_SPEED_CALC_FREQ       1000   /*!< Speed calculation frequency (Hz)  */
 
 /* ===================== Encoder (ABZ) specifications ==================== */
 /**
@@ -47,7 +47,7 @@
  * Hall sensor electrical offset for step 1.
  * Step 1 (usually 100) can be set to any electrical angle. Default 0° means step 1 = 0° electrical.
  */
-#define HALL_ELEC_OFFSET_DEG        0.0f        /*!< Electrical offset for step 1 (degrees) */
+#define HALL_ELEC_OFFSET_DEG        	0.0f        /*!< Electrical offset for step 1 (degrees) */
 #define HALL_ELEC_OFFSET_RAD        (HALL_ELEC_OFFSET_DEG * (M_PI / 180.0f)) /*!< Converted to radians */
 
 /**

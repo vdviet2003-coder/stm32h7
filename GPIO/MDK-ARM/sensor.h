@@ -15,29 +15,21 @@
 
 /* ===================== Data structures ================================ */
 
-/**
- * @brief  Common sensor data (mechanical angle, velocity)
- */
 typedef struct {
     float angle_mech;       /* Mechanical angle in [0, 2p) [rad]  */
     bool  index_found;      /* Z pulse detected? */
 } Sensor_t;
 
-/**
- * @brief  Hall-specific data
- */
 typedef struct {
     uint8_t step;           /* Current step (1..6) */
     uint8_t raw;            /* Raw (U<<2)|(V<<1)|W */
-    float angle_elec;       /*!< Electrical angle estimated from Hall (for debugging)  */
+    float angle_elec;       /* Electrical angle estimated from Hall (for debugging)  */
 } HallSensor_t;
 
-/**
- * @brief  Encoder-specific data
- */
 typedef struct {
-    int64_t counts;         /* Accumulated counts (signed) – */
-    int64_t z_counts;       /* Counts value at the moment of Z pulse (only used after index_found) */
+    int64_t counts;         /* Total counts accumulated since start (never reset) – used for velocity */
+    int64_t cnt_index;      /* Counts relative to the most recent Z pulse – used for angle */
+    int64_t z_counts;       /* Value of 'counts' at the most recent Z pulse */
     int32_t delta;          /* Counts change last period  */
     uint32_t last_cnt;      /* Previous counter value  */
     uint32_t last_z_cnt;    /* Previous Z counter */
@@ -55,18 +47,8 @@ void EncoderSensor_Update(void);
 void HallSensor_Update(void);
 uint8_t ReadZ(void);
 
-/* [0, 2pi) – dùng cho FOC */
 float Sensor_GetElectricalAngle(void);
-
-/* Góc co trong m?t vòng [0, 2pi) */
 float Sensor_GetMechanicalAngle(void);
-
-/* Bu?c Hall hi?n t?i (1..6) */
 uint8_t Hall_GetStep(void);
 
 #endif /* SENSOR_H_ */
-/**
-  * @file    sensor.c
-  * @brief   Implementation of combined Hall + Encoder sensor
-  *          Tri?n khai c?m bi?n Hall + Encoder
-  */

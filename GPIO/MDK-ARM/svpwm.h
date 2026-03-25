@@ -15,18 +15,11 @@
 void SVPWM_Init(TIM_HandleTypeDef *htim, float vdc, float tperiod, uint32_t period_count);
 
 /**
- * @brief Set dq reference voltages
- * @param vd: d-axis voltage
- * @param vq: q-axis voltage
- */
-void SVPWM_SetVoltage(float vd, float vq);
-
-/**
  * @brief Update duty cycles based on electrical angle (radians)
  * @param angle_radian: electrical angle (rad) – obtained from Sensor_GetElectricalAngle()
  * @note This function directly writes to TIM1 CCR1, CCR2, CCR3 registers
  */
-void SVPWM_Update(float angle_radian);
+void SVPWM_Update(float Valpha,float Vbeta );
 
 /**
  * @brief Start PWM outputs (all channels and complementary channels)
