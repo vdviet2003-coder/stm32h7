@@ -10,12 +10,12 @@ Encoder_t encoder = {0};
 /* Hall angle table for 60° electrical steps (in radians) */
 static const float hall_angle_table[7] = {
     0.0f,
-    30.0f * (M_PI / 180.0f),   // step 1: 30°
-    90.0f * (M_PI / 180.0f),   // step 2: 90°
-    150.0f * (M_PI / 180.0f),  // step 3: 150°
-    210.0f * (M_PI / 180.0f),  // step 4: 210°
-    270.0f * (M_PI / 180.0f),  // step 5: 270°
-    330.0f * (M_PI / 180.0f)   // step 6: 330°
+    00.0f * (M_PI / 180.0f),   // step 1: 0°
+    60.0f * (M_PI / 180.0f),   // step 2: 60°
+    120.0f * (M_PI / 180.0f),  // step 3: 120°
+    180.0f * (M_PI / 180.0f),  // step 4: 180°
+    240.0f * (M_PI / 180.0f),  // step 5: 240°
+    300.0f * (M_PI / 180.0f)   // step 6: 300°
 };
 
 static uint8_t Hall_CalculateStep(uint8_t raw) {

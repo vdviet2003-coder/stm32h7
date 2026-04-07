@@ -19,8 +19,6 @@
 #define MECH_ANGLE_AT_Z_RAD         (75.0f * M_PI / 180.0f)   /* Ví d?: 7.5° co, c?n ch?nh theo motor c?a b?n */
 
 /* ===================== Hall sensor ========================= */
-#define HALL_ELEC_OFFSET_DEG        30.0f
-#define HALL_ELEC_OFFSET_RAD        (HALL_ELEC_OFFSET_DEG * (M_PI / 180.0f))
 #define HALL_GPIO_PORT              GPIOD
 #define HALL_U_PIN                  GPIO_PIN_12
 #define HALL_V_PIN                  GPIO_PIN_13

@@ -65,6 +65,8 @@ PID_HandleTypeDef pid_curent;
 		/* Sensor variables */
 float elec_angle_rad;          /* Electrical angle (rad) */
 float mech_angle_rad;          /* Mechanical angle (rad) */
+float mech_angle_deg;
+float elec_angle_deg;  
 float velocity_rads;           /* Angular velocity (rad/s) */
 uint8_t hall_step;             /* Current Hall step (1..6) */
 uint16_t z_counter;             /* Z pulse counter */
@@ -73,7 +75,7 @@ uint32_t max_count;
 float i1, i2,i3;                  								 /* Phase A, B,C currents (A) */
 float i_alpha, i_beta , v_alpha , v_beta;          /* Stationary frame currents */
 float i_d = 0 , i_q = 0 , i_q_ref = 0;             /* Rotating frame currents */
-float v_d = 0 , v_q = -20.0f;
+float v_d = 0 , v_q = 20.0f;
 int cnt = 0;
 int state = 0;
 int state_Z=0;
@@ -96,6 +98,9 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
         Encoder_Update();
         mech_angle_rad = GetSmoothMechanicalAngle();
         elec_angle_rad = GetSmoothElectricalAngle();
+				elec_angle_deg = elec_angle_rad *180.0f/M_PI;
+				mech_angle_deg = mech_angle_rad *180.0f/M_PI;
+
         hall_step = Hall_GetStep();
 
         i1 = ADC_Driver_GetCurrents_1();
