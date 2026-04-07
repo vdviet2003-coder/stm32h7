@@ -57,6 +57,7 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define speed_calc_freq_for_encoder MOTOR_SPEED_CALC_FREQ_FOR_ENCODER
 #define pwm_freq MOTOR_PWM_FREQ
 #define speed_calc_freq MOTOR_SPEED_CALC_FREQ
 

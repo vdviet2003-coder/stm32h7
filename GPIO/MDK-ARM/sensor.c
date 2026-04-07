@@ -1,197 +1,162 @@
 #include "sensor.h"
+#include "tim.h"
+#include "conf.h"
+#include <math.h>
 
-volatile Sensor_t sensor = {0};
-volatile HallSensor_t hall_sensor = {0};
-volatile EncoderSensor_t encoder_sensor = {0};
+/* Definitions */
+HallSensor_t hall_sensor = {0};
+Encoder_t encoder = {0};
 
-/* ===================== Private constants =============================== */
-
-/**
- * @brief  B?ng tra góc di?n (rad) cho t?ng Hall step (1..6).
- *         Giá tr? có th? di?u ch?nh theo do d?c th?c t?.
- *         Step 1 = 0°, step 2 = 60°, step 3 = 120°, step 4 = 180°, step 5 = 270°, step 6 = 300°.
- */
+/* Hall angle table for 60° electrical steps (in radians) */
 static const float hall_angle_table[7] = {
-    0.0f,                           // index 0 không dùng
-    30.0f   * (M_PI / 180.0f),       // step 1: 
-		90.0f  * (M_PI / 180.0f),       // step 2: 
-    150.0f * (M_PI / 180.0f),       // step 3: 
-    210.0f * (M_PI / 180.0f),       // step 4: 
-    270.0f * (M_PI / 180.0f),       // step 5: 
-    330.0f * (M_PI / 180.0f)        // step 6: 
+    0.0f,
+    30.0f * (M_PI / 180.0f),   // step 1: 30°
+    90.0f * (M_PI / 180.0f),   // step 2: 90°
+    150.0f * (M_PI / 180.0f),  // step 3: 150°
+    210.0f * (M_PI / 180.0f),  // step 4: 210°
+    270.0f * (M_PI / 180.0f),  // step 5: 270°
+    330.0f * (M_PI / 180.0f)   // step 6: 330°
 };
 
-/* ===================== Private functions =============================== */
-
-/**
- * @brief  Convert raw UVW to step number (1..6). Adjust mapping if needed.
- */
-static uint8_t Hall_CalculateStep(uint8_t raw)
-{
-    // Typical mapping for 120° Hall sensors. Step 1 = 100, step 2 = 110, step 3 = 010,
-    // step 4 = 011, step 5 = 001, step 6 = 101.
-    switch (raw)
-    {
-        case 0b001: return 5;   // (U=0,V=0,W=1)
-        case 0b011: return 4;   // (0,1,1)
-        case 0b010: return 3;   // (0,1,0)
-        case 0b110: return 2;   // (1,1,0)
-        case 0b100: return 1;   // (1,0,0)
-        case 0b101: return 6;   // (1,0,1)
-        default:    return 0;   // invalid
+static uint8_t Hall_CalculateStep(uint8_t raw) {
+    switch (raw) {
+        case 0b001: return 5;
+        case 0b011: return 4;
+        case 0b010: return 3;
+        case 0b110: return 2;
+        case 0b100: return 1;
+        case 0b101: return 6;
+        default:    return 0;
     }
 }
 
-/**
- * @brief  Internal Hall update: read pins, compute step, estimate electrical angle.
- *         Called from HallSensor_Update() (interrupt context).
- */
-static void Hall_Update_Internal(void)
-{
-    // Read Hall sensor pins
+static void Hall_Update_Internal(void) {
     uint8_t u = HAL_GPIO_ReadPin(HALL_GPIO_PORT, HALL_U_PIN);
     uint8_t v = HAL_GPIO_ReadPin(HALL_GPIO_PORT, HALL_V_PIN);
     uint8_t w = HAL_GPIO_ReadPin(HALL_GPIO_PORT, HALL_W_PIN);
-
-    // Combine into a 3-bit raw value
     hall_sensor.raw = (u << 2) | (v << 1) | w;
-
-    // Convert raw to step number
     hall_sensor.step = Hall_CalculateStep(hall_sensor.raw);
-
-    if (hall_sensor.step != 0 && hall_sensor.step <= 6)
-    {
-        // L?y góc di?n t? b?ng tra
+    if (hall_sensor.step != 0 && hall_sensor.step <= 6) {
         hall_sensor.angle_elec = hall_angle_table[hall_sensor.step];
-
-        // Wrap to [0, 2p) to avoid numerical issues
         hall_sensor.angle_elec = fmodf(hall_sensor.angle_elec, M_2PI);
-        if (hall_sensor.angle_elec < 0)
-            hall_sensor.angle_elec += M_2PI;
-    }
-
-    // Only use Hall angle if encoder index not yet found (startup phase)
-    if (!sensor.index_found && hall_sensor.step != 0)
-    {
-        // Convert electrical angle to mechanical angle
-        sensor.angle_mech = hall_sensor.angle_elec / POLE_PAIRS;
-
-        // Wrap mechanical angle to [0, 2p)
-        sensor.angle_mech = fmodf(sensor.angle_mech, M_2PI);
-        if (sensor.angle_mech < 0)
-            sensor.angle_mech += M_2PI;
+        if (hall_sensor.angle_elec < 0) hall_sensor.angle_elec += M_2PI;
     }
 }
 
-/**
- * @brief  Internal encoder update: read counter, compute delta, accumulate,
- *         calculate velocity, mechanical angle, and cnt_index.
- *         Called periodically from EncoderSensor_Update().
- */
-static void Encoder_Update_Internal(void)
-{
-    uint32_t cnt = __HAL_TIM_GET_COUNTER(&TIM_ENCODER);
-    int32_t delta = (int32_t)(cnt - encoder_sensor.last_cnt);
-
-    // Handle counter overflow/underflow (for 16-bit or 32-bit timers)
-    int32_t period_half = (int32_t)(TIM_ENCODER.Init.Period / 2);
-    if (delta > period_half)
-        delta -= (TIM_ENCODER.Init.Period + 1);
-    else if (delta < -period_half)
-        delta += (TIM_ENCODER.Init.Period + 1);
-
-    encoder_sensor.delta = delta;
-    encoder_sensor.counts += delta;          // Total counts (for velocity)
-    encoder_sensor.last_cnt = cnt;
-
-    // Read Z pulse counter
-    encoder_sensor.z_cnt = __HAL_TIM_GET_COUNTER(&TIM_Z);
-
-    // Detect Z pulse (index) – update reference every time Z occurs
-    if (encoder_sensor.z_cnt != encoder_sensor.last_z_cnt)
-    {
-        // Store the total counts at the moment of Z
-        encoder_sensor.z_counts = encoder_sensor.counts;
-        sensor.index_found = true;   // mark that we have a valid index
-    }
-    encoder_sensor.last_z_cnt = encoder_sensor.z_cnt;
-
-    // Compute cnt_index (relative counts from most recent Z)
-    encoder_sensor.cnt_index = encoder_sensor.counts - encoder_sensor.z_counts;
-
-    // Calculate mechanical angle using cnt_index (relative position)
-    if (sensor.index_found)
-    {
-        // Modulo to get position within one mechanical revolution
-        int64_t mod = encoder_sensor.cnt_index % (int64_t)ENCODER_COUNTS_PER_REV;
-        if (mod < 0) mod += (int64_t)ENCODER_COUNTS_PER_REV;
-
-        // Mechanical angle from relative counts (0 to 2p)
-        float mech_angle = ((float)mod / ENCODER_COUNTS_PER_REV) * M_2PI;
-
-        // Add Z offset to align with d-axis
-        sensor.angle_mech = mech_angle + Z_PULSE_OFFSET_RAD;
-
-        // Wrap to [0, 2pi)
-        sensor.angle_mech = fmodf(sensor.angle_mech, M_2PI);
-        if (sensor.angle_mech < 0)
-            sensor.angle_mech += M_2PI;
-    }
-}
-
-/* ===================== Public functions ================================ */
-
-void Sensor_Init(void)
-{
-    // Start peripherals
+void Sensor_Init(void) {
     HAL_TIMEx_HallSensor_Start_IT(&TIM_HALL);
-    HAL_TIM_Encoder_Start(&TIM_ENCODER, TIM_CHANNEL_ALL);
-    HAL_TIM_Base_Start(&TIM_Z);
-    HAL_TIM_Base_Start_IT(&TIM_SENSOR_SAMPLE);
-
-    // Initial Hall read
-    Hall_Update_Internal();
-
-    // Reset encoder state
-    encoder_sensor.counts = 0;
-    encoder_sensor.cnt_index = 0;
-    encoder_sensor.z_counts = 0;
-    encoder_sensor.last_cnt = __HAL_TIM_GET_COUNTER(&TIM_ENCODER);
-    encoder_sensor.last_z_cnt = __HAL_TIM_GET_COUNTER(&TIM_Z);
-    sensor.index_found = false;
-    sensor.angle_mech = 0.0f;
-}
-
-void EncoderSensor_Update(void)
-{
-    Encoder_Update_Internal();
-}
-
-void HallSensor_Update(void)
-{
     Hall_Update_Internal();
 }
 
-uint8_t ReadZ(void)
-{
-    return encoder_sensor.z_cnt;
+void HallSensor_Update(void) {
+    Hall_Update_Internal();
 }
 
-float Sensor_GetElectricalAngle(void)
-{
-    // Electrical angle = mechanical angle * pole_pairs, then wrap to [0, 2p)
-    float elec = sensor.angle_mech * POLE_PAIRS;
-    elec = fmodf(elec, M_2PI);
-    if (elec < 0) elec += M_2PI;
-    return elec;
+float Sensor_GetElectricalAngle(void) {
+    return hall_sensor.angle_elec;
 }
 
-float Sensor_GetMechanicalAngle(void)
-{
-    return sensor.angle_mech;
+float Sensor_GetMechanicalAngle(void) {
+    return hall_sensor.angle_elec / POLE_PAIRS;
 }
 
-uint8_t Hall_GetStep(void)
-{
+uint8_t Hall_GetStep(void) {
     return hall_sensor.step;
+}
+
+/* ===================== Encoder implementation ===================== */
+void Encoder_Init(void) {
+    HAL_TIM_Encoder_Start(&TIM_ENCODER, TIM_CHANNEL_ALL);
+    HAL_TIM_IC_Start_IT(&TIM_Z_PULSE, TIM_CHANNEL_1);
+    encoder.raw_count = 0;
+    encoder.angle_mech = 0.0f;
+    encoder.angle_elec = 0.0f;
+    encoder.velocity_rads = 0.0f;
+    encoder.calibrated = 0;
+    encoder.mech_offset = 0.0f;
+    encoder.z_pulse_detected = 0;
+}
+
+void Encoder_Update(void) {
+    int32_t cnt = (int32_t)__HAL_TIM_GET_COUNTER(&TIM_ENCODER);
+    encoder.raw_count = cnt;
+    float cnt_angle = (float)cnt / ENCODER_COUNTS_PER_REV * M_2PI;
+    encoder.angle_mech = cnt_angle + encoder.mech_offset;
+    // Normalize to [0, 2p)
+    encoder.angle_mech = fmodf(encoder.angle_mech, M_2PI);
+    if (encoder.angle_mech < 0) encoder.angle_mech += M_2PI;
+    encoder.angle_elec = encoder.angle_mech * POLE_PAIRS;
+    encoder.angle_elec = fmodf(encoder.angle_elec, M_2PI);
+    if (encoder.angle_elec < 0) encoder.angle_elec += M_2PI;
+}
+
+/* Coarse sync using Hall (only before Z calibration) */
+void Encoder_SyncWithHall(void) {
+    if (encoder.calibrated) return;  // already absolute
+    float hall_mech = Sensor_GetMechanicalAngle();
+    int32_t cnt = (int32_t)__HAL_TIM_GET_COUNTER(&TIM_ENCODER);
+    float cnt_angle = (float)cnt / ENCODER_COUNTS_PER_REV * M_2PI;
+    encoder.mech_offset = hall_mech - cnt_angle;
+    // Normalize offset
+    encoder.mech_offset = fmodf(encoder.mech_offset, M_2PI);
+    if (encoder.mech_offset > M_PI) encoder.mech_offset -= M_2PI;
+    if (encoder.mech_offset < -M_PI) encoder.mech_offset += M_2PI;
+    Encoder_Update();
+}
+
+/* Absolute calibration using known mechanical angle at Z pulse */
+void Encoder_CalibrateWithZ(void) {
+    // Reset encoder counter to 0
+    __HAL_TIM_SET_COUNTER(&TIM_ENCODER, 0);
+    // Set offset to the known mechanical angle at Z (from datasheet/measurement)
+    encoder.mech_offset = MECH_ANGLE_AT_Z_RAD;
+    // Normalize offset
+    encoder.mech_offset = fmodf(encoder.mech_offset, M_2PI);
+    if (encoder.mech_offset < 0) encoder.mech_offset += M_2PI;
+    encoder.calibrated = 1;
+    encoder.z_pulse_detected = 1;
+    Encoder_Update();
+}
+
+/* Optional: periodic check to detect drift (uses Hall as reference) */
+void Encoder_CheckSyncWithHall(void) {
+    if (!encoder.calibrated) {
+        // Still not calibrated, keep using Hall for coarse sync
+        Encoder_SyncWithHall();
+        return;
+    }
+    float hall_mech = Sensor_GetMechanicalAngle();
+    float diff_mech = hall_mech - encoder.angle_mech;
+    diff_mech = fmodf(diff_mech, M_2PI);
+    if (diff_mech > M_PI) diff_mech -= M_2PI;
+    if (diff_mech < -M_PI) diff_mech += M_2PI;
+    float diff_elec = diff_mech * POLE_PAIRS;
+    if (fabsf(diff_elec) > 30.0f * (M_PI / 180.0f)) {
+        // Drift too large, re-sync using Hall (or optionally re-calibrate with Z if possible)
+        Encoder_SyncWithHall();
+    }
+}
+
+float Encoder_GetMechanicalAngle(void) {
+    return encoder.angle_mech;
+}
+
+float Encoder_GetElectricalAngle(void) {
+    return encoder.angle_elec;
+}
+
+float Encoder_GetVelocity(void) {
+    return encoder.velocity_rads;
+}
+
+uint8_t Encoder_IsCalibrated(void) {
+    return encoder.calibrated;
+}
+
+float GetSmoothElectricalAngle(void) {
+    return Encoder_GetElectricalAngle();
+}
+
+float GetSmoothMechanicalAngle(void) {
+    return Encoder_GetMechanicalAngle();
 }

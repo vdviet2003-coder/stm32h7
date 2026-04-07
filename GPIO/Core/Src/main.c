@@ -38,6 +38,7 @@
 #include "pid.h"
 #include "foc_transform.h"
 
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -72,8 +73,10 @@ uint32_t max_count;
 float i1, i2,i3;                  								 /* Phase A, B,C currents (A) */
 float i_alpha, i_beta , v_alpha , v_beta;          /* Stationary frame currents */
 float i_d = 0 , i_q = 0 , i_q_ref = 0;             /* Rotating frame currents */
-float v_d = 0 , v_q = -5.0f;
+float v_d = 0 , v_q = -20.0f;
 int cnt = 0;
+int state = 0;
+int state_Z=0;
 /*PID*/
 /* USER CODE END PV */
 
@@ -85,81 +88,60 @@ static void MPU_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+/* FOC loop interrupt (e.g., 10 kHz) */
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-    if (htim->Instance == TIM5)
-		{
-			
-/*														|-----------------|
-			|----------------|			|							uPos|
-			|Vq							 |			|							uNeg|
-			|					 Valpha|----> |Valpha 			vPos|
-			|Vd							 | 			|							vNeg|
-			|					  Vbeta|---->	|Vbeta				wPos|
-			|Angle 					 |			|							wNeg|
-			|----------------|			|-----------------|
-			*/
-/*
- * FOC (Field Oriented Control) DIAGRAM FOR PMSM MOTOR
- * ------------------------------------------------------------
- * Control flow from left to right:
- */
-/*
- 1. SPEED AND CURRENT CONTROL BLOCKS (Outer & Inner Loops)
-    - PI Speed Control: Generates the reference current (Iq_ref).
-    - Id (Constant): d-axis reference current (Id_ref), typically set to 0.
-    - PI Iq Control & PI Id Control: Compares actual currents with references
-      to generate control voltages (Vd, Vq).*/
-/*
- 2. INVERSE PARK TRANSFORMATION BLOCK
-    - Inputs: Vd, Vq, and Rotor Angle.
-    - Function: Converts voltages from the rotating reference frame (d-q) 
-      to the stationary reference frame (alpha-beta).*/
-/*
- 3. SVPWM CONTROLLER BLOCK (Space Vector Pulse Width Modulation)
-    - Inputs: Valfa, Vbeta.
-    - Function: Generates gate signals (uPos, uNeg, vPos, vNeg, wPos, wNeg)
-      to drive the power semiconductor switches.*/
-/*
- 4. POWER STAGE AND MOTOR BLOCKS (Plant)
-    - 6-Mosfet: 3-phase Inverter bridge that converts DC to AC.
-    - PMSM: The motor receives Vabc voltage and produces speed (Me_Speed).*/
-/*
- 5. FEEDBACK LOOP BLOCKS
-    - Clark Transform: Converts 3-phase currents (Iabc) into 2-phase 
-      stationary currents (Ialfa, Ibeta).
-    - Park Transform: Converts (Ialfa, Ibeta) to the rotating reference 
-      frame (Id, Iq) based on the rotor angle.
-    - Feedback: Id and Iq are fed back to the controllers to close the loop.*/
-		
-				HAL_GPIO_WritePin(GPIOF, GPIO_PIN_9, GPIO_PIN_SET);
-        elec_angle_rad = Sensor_GetElectricalAngle();     // Electrical angle (rad) for Park transform
-        mech_angle_rad = Sensor_GetMechanicalAngle();     // Mechanical angle (rad)
-        hall_step      = Hall_GetStep();                  // Current Hall step (1..6)
-        z_counter      = ReadZ();
-				i1 = ADC_Driver_GetCurrents_1();
-			  i2 = ADC_Driver_GetCurrents_2();
-				i3 = ADC_Driver_GetCurrents_3();
-				
-				FOC_InvPark(v_q,v_d,elec_angle_rad,&v_alpha,&v_beta);
-				SVPWM_Update(v_alpha,v_beta);
-				
+    if (htim->Instance == TIM2)   // FOC loop
+    {
+        Encoder_Update();
+        mech_angle_rad = GetSmoothMechanicalAngle();
+        elec_angle_rad = GetSmoothElectricalAngle();
+        hall_step = Hall_GetStep();
 
-		}
-		else if (htim->Instance == TIM3)
-		{
-			EncoderSensor_Update();
-			velocity_rads = (float)encoder_sensor.delta / ENCODER_COUNTS_PER_REV * M_2PI * MOTOR_SPEED_CALC_FREQ;
-		}
+        i1 = ADC_Driver_GetCurrents_1();
+        i2 = ADC_Driver_GetCurrents_2();
+        i3 = ADC_Driver_GetCurrents_3();
+
+        if (state == 1) {
+            HAL_GPIO_WritePin(GPIOF, GPIO_PIN_9, GPIO_PIN_SET);
+            FOC_InvPark(v_q, v_d, elec_angle_rad, &v_alpha, &v_beta);
+            SVPWM_Update(v_alpha, v_beta);
+        } else {
+            HAL_GPIO_WritePin(GPIOF, GPIO_PIN_9, GPIO_PIN_RESET);
+        }
+    }
+    else if (htim->Instance == TIM5)   // Speed calculation & sync check (1 kHz)
+    {
+        static int32_t last_count = 0;
+        int32_t current_count = (int32_t)__HAL_TIM_GET_COUNTER(&TIM_ENCODER);
+        int32_t delta = current_count - last_count;
+        last_count = current_count;
+        float dt = 1.0f / MOTOR_SPEED_CALC_FREQ_FOR_ENCODER;
+        encoder.velocity_rads = (float)delta / ENCODER_COUNTS_PER_REV * M_2PI / dt;
+
+        // Periodically check alignment with Hall (optional)
+        Encoder_CheckSyncWithHall();
+    }
 }
+
+/* Hall sensor capture (TIM4) */
 void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 {
     if (htim->Instance == TIM4 && htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1)
     {
-			HallSensor_Update();
+        HallSensor_Update();
+        // If encoder not yet calibrated, use Hall to get a coarse offset
+        if (!Encoder_IsCalibrated()) {
+            Encoder_SyncWithHall();
+        }
+    }
+    else if (htim->Instance == TIM12)   // Z pulse capture
+    {
+        Encoder_CalibrateWithZ();   // uses MECH_ANGLE_AT_Z_RAD
+			state_Z++;
     }
 }
+
 
 /* USER CODE END 0 */
 
@@ -201,15 +183,18 @@ int main(void)
   MX_TIM2_Init();
   MX_TIM4_Init();
   MX_TIM5_Init();
-  MX_TIM23_Init();
   MX_ADC1_Init();
   MX_ADC2_Init();
   MX_USART1_UART_Init();
+  MX_TIM12_Init();
+  MX_TIM6_Init();
   /* USER CODE BEGIN 2 */
 		//center-alinge
 		SVPWM_Init(&htim1, VDC_BUS, (float)MOTOR_PWM_FREQ, htim1.Init.Period);
 		SVPWM_Start();
-    HAL_TIM_Base_Start_IT(&htim3);
+    HAL_TIM_Base_Start_IT(&TIM_FOC_LOOP);
+		HAL_TIM_Base_Start_IT(&TIM_SPEED_CALC);
+		Encoder_Init();
 		Sensor_Init();
 		HallSensor_Update();
 		//adc//

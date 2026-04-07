@@ -1,54 +1,53 @@
-/**
-  * @file    sensor.h
-  * @brief   Combined Hall + Encoder sensor module (SimpleFOC style)
-  */
+#ifndef SENSOR_H
+#define SENSOR_H
 
-#ifndef SENSOR_H_
-#define SENSOR_H_
-
-#include "main.h"
-#include "conf.h"
 #include "tim.h"
+#include "gpio.h"
+#include "conf.h"
 #include <stdint.h>
-#include <stdbool.h>
-#include <math.h>
 
-/* ===================== Data structures ================================ */
-
+/* Hall structures */
 typedef struct {
-    float angle_mech;       /* Mechanical angle in [0, 2p) [rad]  */
-    bool  index_found;      /* Z pulse detected? */
-} Sensor_t;
-
-typedef struct {
-    uint8_t step;           /* Current step (1..6) */
-    uint8_t raw;            /* Raw (U<<2)|(V<<1)|W */
-    float angle_elec;       /* Electrical angle estimated from Hall (for debugging)  */
+    uint8_t raw;
+    uint8_t step;
+    float angle_elec;
 } HallSensor_t;
 
+/* Encoder structure */
 typedef struct {
-    int64_t counts;         /* Total counts accumulated since start (never reset) – used for velocity */
-    int64_t cnt_index;      /* Counts relative to the most recent Z pulse – used for angle */
-    int64_t z_counts;       /* Value of 'counts' at the most recent Z pulse */
-    int32_t delta;          /* Counts change last period  */
-    uint32_t last_cnt;      /* Previous counter value  */
-    uint32_t last_z_cnt;    /* Previous Z counter */
-    uint32_t z_cnt;         /* Current Z counter  */
-} EncoderSensor_t;
+    volatile int32_t raw_count;
+    volatile float angle_mech;
+    volatile float angle_elec;
+    volatile float velocity_rads;
+    volatile uint8_t calibrated;   // 1 if absolute position known (Z seen)
+    volatile float mech_offset;     // mechanical angle offset (rad)
+    volatile uint8_t z_pulse_detected;
+} Encoder_t;
 
-/* ===================== Exported variables ============================== */
-extern volatile Sensor_t sensor;
-extern volatile HallSensor_t hall_sensor;
-extern volatile EncoderSensor_t encoder_sensor;
+/* Extern declarations */
+extern HallSensor_t hall_sensor;
+extern Encoder_t encoder;
 
-/* ===================== Function prototypes ============================= */
+/* Hall functions */
 void Sensor_Init(void);
-void EncoderSensor_Update(void);
 void HallSensor_Update(void);
-uint8_t ReadZ(void);
-
 float Sensor_GetElectricalAngle(void);
 float Sensor_GetMechanicalAngle(void);
 uint8_t Hall_GetStep(void);
 
-#endif /* SENSOR_H_ */
+/* Encoder functions */
+void Encoder_Init(void);
+void Encoder_Update(void);
+void Encoder_SyncWithHall(void);        // coarse sync using Hall (before Z)
+void Encoder_CalibrateWithZ(void);      // absolute calibration using MECH_ANGLE_AT_Z_RAD
+float Encoder_GetMechanicalAngle(void);
+float Encoder_GetElectricalAngle(void);
+float Encoder_GetVelocity(void);
+uint8_t Encoder_IsCalibrated(void);
+void Encoder_CheckSyncWithHall(void);   // optional periodic check
+
+/* Unified smooth angle (always from encoder) */
+float GetSmoothElectricalAngle(void);
+float GetSmoothMechanicalAngle(void);
+
+#endif
