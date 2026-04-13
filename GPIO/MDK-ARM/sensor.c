@@ -1,23 +1,19 @@
 #include "sensor.h"
-#include "tim.h"
-#include "conf.h"
-#include <math.h>
 
-/* Definitions */
+/* ------------------- Hall implementation ------------------- */
 HallSensor_t hall_sensor = {0};
-Encoder_t encoder = {0};
-
-/* Hall angle table for 60? electrical steps (in radians) */
+/* Hall angle table for 60° electrical steps (rad) */
 static const float hall_angle_table[7] = {
     0.0f,
-    30.0f * (M_PI / 180.0f),   // step 1: 30?
-    90.0f * (M_PI / 180.0f),   // step 2: 90?
-    150.0f * (M_PI / 180.0f),  // step 3: 150?
-    210.0f * (M_PI / 180.0f),  // step 4: 210?
-    270.0f * (M_PI / 180.0f),  // step 5: 270?
-    330.0f * (M_PI / 180.0f)   // step 6: 330?
+    00.0f * (M_PI / 180.0f),   // step 1: 0?
+    60.0f * (M_PI / 180.0f),   // step 2: 60?
+    120.0f * (M_PI / 180.0f),  // step 3: 120?
+    180.0f * (M_PI / 180.0f),  // step 4: 180?
+    240.0f * (M_PI / 180.0f),  // step 5: 240?
+    300.0f * (M_PI / 180.0f)   // step 6: 300?
 };
 
+/* Convert raw 3-bit value to step 1..6 */
 static uint8_t Hall_CalculateStep(uint8_t raw) {
     switch (raw) {
         case 0b001: return 5;
@@ -30,6 +26,7 @@ static uint8_t Hall_CalculateStep(uint8_t raw) {
     }
 }
 
+/* Internal Hall update – reads GPIOs */
 static void Hall_Update_Internal(void) {
     uint8_t u = HAL_GPIO_ReadPin(HALL_GPIO_PORT, HALL_U_PIN);
     uint8_t v = HAL_GPIO_ReadPin(HALL_GPIO_PORT, HALL_V_PIN);
@@ -37,13 +34,12 @@ static void Hall_Update_Internal(void) {
     hall_sensor.raw = (u << 2) | (v << 1) | w;
     hall_sensor.step = Hall_CalculateStep(hall_sensor.raw);
     if (hall_sensor.step != 0 && hall_sensor.step <= 6) {
-        hall_sensor.angle_elec = hall_angle_table[hall_sensor.step];
-        hall_sensor.angle_elec = fmodf(hall_sensor.angle_elec, M_2PI);
-        if (hall_sensor.angle_elec < 0) hall_sensor.angle_elec += M_2PI;
+        hall_sensor.angle_elec_hall = hall_angle_table[hall_sensor.step];
     }
 }
 
-void Sensor_Init(void) {
+/* Public Hall functions */
+void  Hall_Sensor_Init(void) {
     HAL_TIMEx_HallSensor_Start_IT(&TIM_HALL);
     Hall_Update_Internal();
 }
@@ -52,111 +48,128 @@ void HallSensor_Update(void) {
     Hall_Update_Internal();
 }
 
-float Sensor_GetElectricalAngle(void) {
-    return hall_sensor.angle_elec;
-}
-
-float Sensor_GetMechanicalAngle(void) {
-    return hall_sensor.angle_elec / POLE_PAIRS;
+float Sensor_Get_Electrical_Angle_Hall(void) {
+    return hall_sensor.angle_elec_hall;
 }
 
 uint8_t Hall_GetStep(void) {
     return hall_sensor.step;
 }
 
-/* ===================== Encoder implementation ===================== */
-void Encoder_Init(void) {
+
+/* ------------------- Encoder implementation ------------------- */
+Encoder_t encoder = {0};
+static int64_t encoder_last_cnt = 0;       // Luu giá tr? CNT l?n tru?c (ép v? 64-bit)
+static int64_t encoder_accumulator = 0;    // T?ng s? xung 64-bit
+static float encoder_prev_mech_angle = 0.0f;
+static int64_t encoder_prev_time_us = 0;
+
+
+#define ENCODER_32BIT_RANGE     4294967296ULL   // 2^32
+#define ENCODER_HALF_RANGE      2147483647LL    // 2^31 - 1
+void Encoder_Sensor_Init(void) {
     HAL_TIM_Encoder_Start(&TIM_ENCODER, TIM_CHANNEL_ALL);
-    HAL_TIM_IC_Start_IT(&TIM_Z_PULSE, TIM_CHANNEL_1);
-    encoder.raw_count = 0;
-    encoder.angle_mech = 0.0f;
-    encoder.angle_elec = 0.0f;
-    encoder.velocity_rads = 0.0f;
-    encoder.calibrated = 0;
-    encoder.mech_offset = 0.0f;
-    encoder.z_pulse_detected = 0;
-}
-
-void Encoder_Update(void) {
-    int32_t cnt = (int32_t)__HAL_TIM_GET_COUNTER(&TIM_ENCODER);
-    encoder.raw_count = cnt;
-    float cnt_angle = (float)cnt / ENCODER_COUNTS_PER_REV * M_2PI;
-    encoder.angle_mech = cnt_angle + encoder.mech_offset;
-    // Normalize to [0, 2p)
-    encoder.angle_mech = fmodf(encoder.angle_mech, M_2PI);
-    if (encoder.angle_mech < 0) encoder.angle_mech += M_2PI;
-    encoder.angle_elec = encoder.angle_mech * POLE_PAIRS;
-    encoder.angle_elec = fmodf(encoder.angle_elec, M_2PI);
-    if (encoder.angle_elec < 0) encoder.angle_elec += M_2PI;
-}
-
-/* Coarse sync using Hall (only before Z calibration) */
-void Encoder_SyncWithHall(void) {
-    if (encoder.calibrated) return;  // already absolute
-    float hall_mech = Sensor_GetMechanicalAngle();
-    int32_t cnt = (int32_t)__HAL_TIM_GET_COUNTER(&TIM_ENCODER);
-    float cnt_angle = (float)cnt / ENCODER_COUNTS_PER_REV * M_2PI;
-    encoder.mech_offset = hall_mech - cnt_angle;
-    // Normalize offset
-    encoder.mech_offset = fmodf(encoder.mech_offset, M_2PI);
-    if (encoder.mech_offset > M_PI) encoder.mech_offset -= M_2PI;
-    if (encoder.mech_offset < -M_PI) encoder.mech_offset += M_2PI;
-    Encoder_Update();
-}
-
-/* Absolute calibration using known mechanical angle at Z pulse */
-void Encoder_CalibrateWithZ(void) {
-    // Reset encoder counter to 0
     __HAL_TIM_SET_COUNTER(&TIM_ENCODER, 0);
-    // Set offset to the known mechanical angle at Z (from datasheet/measurement)
-    encoder.mech_offset = MECH_ANGLE_AT_Z_RAD;
-    // Normalize offset
-    encoder.mech_offset = fmodf(encoder.mech_offset, M_2PI);
-    if (encoder.mech_offset < 0) encoder.mech_offset += M_2PI;
-    encoder.calibrated = 1;
-    encoder.z_pulse_detected = 1;
-    Encoder_Update();
+    encoder.raw_count = 0;
+    encoder.mech_angle = 0.0f;
+    encoder.elec_angle = 0.0f;
+		encoder.mech_speed = 0.0f;
+    encoder.elec_speed = 0.0f;
 }
+static void Encoder_Update_Internal(void){
+    int64_t current_cnt = (int64_t)__HAL_TIM_GET_COUNTER(&TIM_ENCODER);
+    int64_t delta = current_cnt - encoder_last_cnt;
 
-/* Optional: periodic check to detect drift (uses Hall as reference) */
-void Encoder_CheckSyncWithHall(void) {
-    if (!encoder.calibrated) {
-        // Still not calibrated, keep using Hall for coarse sync
-        Encoder_SyncWithHall();
-        return;
+    // X? lý tràn 32-bit
+    if (delta > ENCODER_HALF_RANGE) {
+        delta -= ENCODER_32BIT_RANGE;
+    } else if (delta < -ENCODER_HALF_RANGE) {
+        delta += ENCODER_32BIT_RANGE;
     }
-    float hall_mech = Sensor_GetMechanicalAngle();
-    float diff_mech = hall_mech - encoder.angle_mech;
-    diff_mech = fmodf(diff_mech, M_2PI);
-    if (diff_mech > M_PI) diff_mech -= M_2PI;
-    if (diff_mech < -M_PI) diff_mech += M_2PI;
-    float diff_elec = diff_mech * POLE_PAIRS;
-    if (fabsf(diff_elec) > 30.0f * (M_PI / 180.0f)) {
-        // Drift too large, re-sync using Hall (or optionally re-calibrate with Z if possible)
-        Encoder_SyncWithHall();
+
+    encoder_accumulator += delta;
+    encoder.raw_count = encoder_accumulator;   	
+    encoder_last_cnt = current_cnt;
+
+    // mechanic angle (rad)
+    encoder.mech_angle = (float)((double)encoder.raw_count * (2.0 * M_PI) / ENCODER_COUNTS_PER_REV);
+    encoder.mech_angle = fmodf(encoder.mech_angle, (float)(2.0 * M_PI));
+    if (encoder.mech_angle < 0) encoder.mech_angle += (float)(2.0 * M_PI);
+
+    // electric angle
+    encoder.elec_angle = encoder.mech_angle * POLE_PAIRS;
+    encoder.elec_angle = fmodf(encoder.elec_angle, (float)(2.0 * M_PI));
+    if (encoder.elec_angle < 0) encoder.elec_angle += (float)(2.0 * M_PI);
+		
+		static float prev_mech_angle = 0.0f;
+    static float prev_elec_angle = 0.0f;
+    static int first_run = 1;
+
+    float dt = 1.0f / MOTOR_SPEED_CALC_FREQ_FOR_ENCODER;  // dt c? d?nh (vd: 0.001s)
+
+    if (first_run) {
+        encoder.mech_speed = 0.0f;
+        encoder.elec_speed = 0.0f;
+        first_run = 0;
+    } else {
+        float delta_mech = encoder.mech_angle - prev_mech_angle;
+        float delta_elec = encoder.elec_angle - prev_elec_angle;
+
+        // X? lý wrap-around góc t? 2p v? 0
+        if (delta_mech > M_PI)   delta_mech -= (float)(2.0 * M_PI);
+        if (delta_mech < -M_PI)  delta_mech += (float)(2.0 * M_PI);
+        if (delta_elec > M_PI)   delta_elec -= (float)(2.0 * M_PI);
+        if (delta_elec < -M_PI)  delta_elec += (float)(2.0 * M_PI);
+
+        encoder.mech_speed = delta_mech / dt;
+        encoder.elec_speed = delta_elec / dt;
     }
+
+    prev_mech_angle = encoder.mech_angle;
+    prev_elec_angle = encoder.elec_angle;
+		
+}
+void EncoderSensor_Update(void){
+	Encoder_Update_Internal();
+}
+float Encoder_Get_Raw_Angle(void) {
+    return encoder.raw_count;
+}
+float Encoder_Get_Electric_Angle(void) {
+    return encoder.elec_angle;
+}
+float Encoder_Get_Mechanic_Angle(void) {
+    return encoder.mech_angle;
+}
+float Encoder_Get_Mechanic_Speed(void) {
+    return encoder.mech_speed;
 }
 
-float Encoder_GetMechanicalAngle(void) {
-    return encoder.angle_mech;
+float Encoder_Get_Electric_Speed(void) {
+    return encoder.elec_speed;
+}
+void Encoder_Reset(void) {
+    __HAL_TIM_SET_COUNTER(&TIM_ENCODER, 0);
+    encoder_accumulator = 0;
+    encoder_last_cnt = 0;
+    encoder.raw_count = 0;
+    encoder.mech_angle = 0.0f;
+    encoder.elec_angle = 0.0f;
+    encoder.mech_speed = 0.0f;
+    encoder.elec_speed = 0.0f;
 }
 
-float Encoder_GetElectricalAngle(void) {
-    return encoder.angle_elec;
-}
 
-float Encoder_GetVelocity(void) {
-    return encoder.velocity_rads;
-}
 
-uint8_t Encoder_IsCalibrated(void) {
-    return encoder.calibrated;
-}
 
-float GetSmoothElectricalAngle(void) {
-    return Encoder_GetElectricalAngle();
-}
 
-float GetSmoothMechanicalAngle(void) {
-    return Encoder_GetMechanicalAngle();
-}
+
+
+
+
+
+
+
+
+
+

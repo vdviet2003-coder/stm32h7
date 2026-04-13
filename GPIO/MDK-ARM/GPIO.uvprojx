@@ -1191,6 +1191,16 @@
               <FileType>1</FileType>
               <FilePath>.\pid.c</FilePath>
             </File>
+            <File>
+              <FileName>calib_encoder_incremental.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\calib_encoder_incremental.h</FilePath>
+            </File>
+            <File>
+              <FileName>calib_encoder_incremental.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\calib_encoder_incremental.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

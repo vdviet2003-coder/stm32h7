@@ -37,6 +37,7 @@
 "gpio\svpwm.o"
 "gpio\uart_dma_lib.o"
 "gpio\pid.o"
+"gpio\calib_encoder_incremental.o"
 "gpio\basicmathfunctions.o"
 "gpio\basicmathfunctionsf16.o"
 "gpio\bayesfunctions.o"

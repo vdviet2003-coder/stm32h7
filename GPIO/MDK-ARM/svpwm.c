@@ -21,7 +21,7 @@ static uint8_t sector;                /* Current sector 1..6 */
  *----------------------------------------------------------------------------*/
 static void SVPWM_Calculate(float Valpha,float Vbeta  )
 {
-    arm_sqrt_f32(Valpha * Valpha + Vbeta * Vbeta, &Vref);
+    arm_sqrt_f32((Valpha * Valpha) + (Vbeta * Vbeta), &Vref);
     arm_atan2_f32(Vbeta, Valpha, &agl_radian);
     agl = agl_radian * (180.0f / M_PI);
 

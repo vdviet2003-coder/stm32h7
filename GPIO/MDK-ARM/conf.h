@@ -15,8 +15,6 @@
 #define ENCODER_PPR                 2500.0f
 #define ENCODER_QUADRATURE          4.0f
 #define ENCODER_COUNTS_PER_REV      (ENCODER_PPR * ENCODER_QUADRATURE)  /* 10000 */
-/* Góc co h?c (rad) t?i th?i di?m xung Z (theo tài li?u ho?c do th?c t?) */
-#define MECH_ANGLE_AT_Z_RAD         (75.0f * M_PI / 180.0f)   /* Ví d?: 7.5° co, c?n ch?nh theo motor c?a b?n */
 
 /* ===================== Hall sensor ========================= */
 #define HALL_GPIO_PORT              GPIOD
@@ -26,11 +24,11 @@
 
 /* ===================== Timer handles ======================= */
 #define TIM_SVPWM                   htim1
-#define TIM_FOC_LOOP                htim2
-#define TIM_ENCODER                 htim3
+#define TIM_FOC_LOOP                htim3
+#define TIM_ENCODER                 htim2
 #define TIM_HALL                    htim4
 #define TIM_SPEED_CALC              htim5
-#define TIM_Z_PULSE                 htim12
+#define TIM_Z_PULSE                 htim12   // Không dùng Z pulse
 
 /* ===================== DC bus voltage ===================== */
 #ifndef VDC_BUS
@@ -47,5 +45,10 @@
 #ifndef SQRT3
 #define SQRT3                       1.7320508075688772f
 #endif
+
+/* ===================== Calibration defaults ================ */
+#define CALIB_DEFAULT_VD            2.0f      // Ði?n áp lock (V)
+#define CALIB_DEFAULT_VQ            0.0f
+#define CALIB_DEFAULT_DURATION_MS   1500      // ms
 
 #endif /* CONF_H */

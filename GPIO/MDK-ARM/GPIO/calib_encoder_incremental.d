@@ -1,4 +1,7 @@
-gpio/main.o: ..\Core\Src\main.c ..\Core\Inc\main.h \
+gpio/calib_encoder_incremental.o: calib_encoder_incremental.c \
+  ..\MDK-ARM\calib_encoder_incremental.h \
+  C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdint.h ..\MDK-ARM\sensor.h \
+  ..\Core\Inc\tim.h ..\Core\Inc\main.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
   ..\Core\Inc\stm32h7xx_hal_conf.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h \
@@ -6,7 +9,6 @@ gpio/main.o: ..\Core\Src\main.c ..\Core\Inc\main.h \
   ..\Drivers\CMSIS\Device\ST\STM32H7xx\Include\stm32h7xx.h \
   ..\Drivers\CMSIS\Device\ST\STM32H7xx\Include\stm32h723xx.h \
   ..\Drivers\CMSIS\Include\core_cm7.h \
-  C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdint.h \
   ..\Drivers\CMSIS\Include\cmsis_version.h \
   ..\Drivers\CMSIS\Include\cmsis_compiler.h \
   ..\Drivers\CMSIS\Include\cmsis_armclang.h \
@@ -38,8 +40,7 @@ gpio/main.o: ..\Core\Src\main.c ..\Core\Inc\main.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h \
-  ..\MDK-ARM\conf.h ..\Core\Inc\adc.h ..\Core\Inc\dma.h \
-  ..\Core\Inc\tim.h ..\Core\Inc\usart.h ..\Core\Inc\gpio.h \
+  ..\MDK-ARM\conf.h ..\Core\Inc\gpio.h ..\MDK-ARM\foc_transform.h \
   C:\Users\VU\ VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\arm_math.h \
   C:\Users\VU\ VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\arm_math_types.h \
   C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\string.h \
@@ -63,9 +64,4 @@ gpio/main.o: ..\Core\Src\main.c ..\Core\Inc\main.h \
   C:\Users\VU\ VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\dsp\transform_functions.h \
   C:\Users\VU\ VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\dsp\filtering_functions.h \
   C:\Users\VU\ VIET\AppData\Local\Arm\Packs\ARM\CMSIS-DSP\1.14.2\Include\dsp\quaternion_math_functions.h \
-  C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdbool.h \
-  C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdio.h \
-  C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdlib.h ..\MDK-ARM\sensor.h \
-  ..\MDK-ARM\adc_driver.h ..\MDK-ARM\svpwm.h ..\MDK-ARM\uart_dma_lib.h \
-  ..\MDK-ARM\pid.h ..\MDK-ARM\foc_transform.h \
-  ..\MDK-ARM\calib_encoder_incremental.h
+  ..\MDK-ARM\svpwm.h

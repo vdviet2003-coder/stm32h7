@@ -13,7 +13,7 @@ typedef struct {
     float E1;           // Previous error (e(k-1))
     float E2;           // Error before previous (e(k-2))
     float lastOutput;   // Previous output (u(k-1))
-    float alpha;        // Precomputed coefficient alpha
+    float alpha;        // Precomputed coefficient alpha	
     float beta;         // Precomputed coefficient beta
     float gamma;        // Precomputed coefficient gamma
     uint8_t initialized;

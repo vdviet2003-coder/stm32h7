@@ -37,6 +37,7 @@
 #include "uart_dma_lib.h"
 #include "pid.h"
 #include "foc_transform.h"
+#include "calib_encoder_incremental.h"
 
 
 /* USER CODE END Includes */
@@ -45,7 +46,8 @@
 /* USER CODE BEGIN PTD */
 /*PID*/
 PID_HandleTypeDef pid_speed;
-PID_HandleTypeDef pid_curent;
+PID_HandleTypeDef pid_id;
+PID_HandleTypeDef pid_iq;
 
 /* USER CODE END PTD */
 
@@ -63,88 +65,120 @@ PID_HandleTypeDef pid_curent;
 
 /* USER CODE BEGIN PV */
 		/* Sensor variables */
-float elec_angle_rad;          /* Electrical angle (rad) */
-float mech_angle_rad;          /* Mechanical angle (rad) */
+float elec_angle_rad_hall;          /* Electrical angle (rad) */
+float elec_angle_rad_encoder;          
+float mech_angle_rad_encoder;          /* Mechanical angle (rad) */
 float mech_angle_deg;
-float elec_angle_deg;  
-float velocity_rads;           /* Angular velocity (rad/s) */
+float elec_angle_deg; 
+float raw_angle;
+float speed_ref_rads = 20; // setpoint speed rad/s
+
 uint8_t hall_step;             /* Current Hall step (1..6) */
-uint16_t z_counter;             /* Z pulse counter */
-uint32_t max_count;
+
 /* Current measurement variables */
-float i1, i2,i3;                  								 /* Phase A, B,C currents (A) */
+float iu, iv,iw;                  								 /* Phase A, B,C currents (A) */
+
 float i_alpha, i_beta , v_alpha , v_beta;          /* Stationary frame currents */
-float i_d = 0 , i_q = 0 , i_q_ref = 0;             /* Rotating frame currents */
-float v_d = 0 , v_q = 20.0f;
-int cnt = 0;
+
+float i_d = 0 , i_q = 0 , i_q_ref = 0 , i_d_ref = 0;             /* Rotating frame currents */
+   
+
+float v_d = 0.0f , v_q = 0.0f;
+
 int state = 0;
+
 int state_Z=0;
+
+int dir =1;
+
 /*PID*/
+float speed_mechanic_rad;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MPU_Config(void);
 /* USER CODE BEGIN PFP */
+void Calib(void);
+void Align_Process(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 /* FOC loop interrupt (e.g., 10 kHz) */
+
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-    if (htim->Instance == TIM2)   // FOC loop
-    {
-        Encoder_Update();
-        mech_angle_rad = GetSmoothMechanicalAngle();
-        elec_angle_rad = GetSmoothElectricalAngle();
-				elec_angle_deg = elec_angle_rad *180.0f/M_PI;
-				mech_angle_deg = mech_angle_rad *180.0f/M_PI;
-
+    if (htim->Instance == TIM3)   // FOC loop (10kHz)
+    {		
+        elec_angle_rad_hall = Sensor_Get_Electrical_Angle_Hall();
+				
+				raw_angle = Encoder_Get_Raw_Angle();
+				elec_angle_rad_encoder = Encoder_Get_Electric_Angle();
+				mech_angle_rad_encoder = Encoder_Get_Mechanic_Angle();
+        speed_mechanic_rad = Encoder_Get_Mechanic_Speed();
         hall_step = Hall_GetStep();
+        iu = ADC_Driver_GetCurrents_1();
+        iv = ADC_Driver_GetCurrents_2();
+        iw = ADC_Driver_GetCurrents_3();
+				HAL_GPIO_WritePin(GPIOF, GPIO_PIN_9, GPIO_PIN_SET);
 
-        i1 = ADC_Driver_GetCurrents_1();
-        i2 = ADC_Driver_GetCurrents_2();
-        i3 = ADC_Driver_GetCurrents_3();
+				  if (state == 1) 
+					{
+					FOC_InvPark(v_d, v_q, 0, &v_alpha, &v_beta);
+					SVPWM_Update(v_alpha, v_beta); 
+					Encoder_Reset();
+					} 
+					else if (state==2) {
 
-        if (state == 1) {
-            HAL_GPIO_WritePin(GPIOF, GPIO_PIN_9, GPIO_PIN_SET);
-            FOC_InvPark(v_q, v_d, elec_angle_rad, &v_alpha, &v_beta);
-            SVPWM_Update(v_alpha, v_beta);
-        } else {
-            HAL_GPIO_WritePin(GPIOF, GPIO_PIN_9, GPIO_PIN_RESET);
-        }
+					FOC_Clarke(iu, iv, iw, &i_alpha, &i_beta);
+					FOC_Park(i_alpha, i_beta, elec_angle_rad_encoder, &i_d, &i_q);
+
+
+					i_q_ref = PID_Compute(&pid_speed, speed_ref_rads, speed_mechanic_rad);
+					v_q = PID_Compute(&pid_iq, i_q_ref, i_q);
+					v_d = PID_Compute(&pid_id, 0,i_d);
+
+					FOC_InvPark(v_d, v_q, elec_angle_rad_encoder, &v_alpha, &v_beta);
+					SVPWM_Update(v_alpha, v_beta);
+						
+				
+						
+
+					}	
+					else if(state ==3){
+						FOC_InvPark(v_d, v_q, elec_angle_rad_encoder, &v_alpha, &v_beta);
+						SVPWM_Update(v_alpha, v_beta);
+					}
+					else if(state ==4){
+						
+						v_q = PID_Compute(&pid_iq, i_q_ref, i_q);
+						v_d = PID_Compute(&pid_id, i_d_ref, i_d);
+						FOC_InvPark(v_d, v_q, elec_angle_rad_encoder, &v_alpha, &v_beta);
+						SVPWM_Update(v_alpha, v_beta);
+						FOC_Clarke(iu, iv, iw, &i_alpha, &i_beta);
+						FOC_Park(i_alpha, i_beta, elec_angle_rad_encoder, &i_d, &i_q);
+						
+						HAL_GPIO_WritePin(GPIOF, GPIO_PIN_9, GPIO_PIN_RESET);
+
+					}
     }
-    else if (htim->Instance == TIM5)   // Speed calculation & sync check (1 kHz)
-    {
-        static int32_t last_count = 0;
-        int32_t current_count = (int32_t)__HAL_TIM_GET_COUNTER(&TIM_ENCODER);
-        int32_t delta = current_count - last_count;
-        last_count = current_count;
-        float dt = 1.0f / MOTOR_SPEED_CALC_FREQ_FOR_ENCODER;
-        encoder.velocity_rads = (float)delta / ENCODER_COUNTS_PER_REV * M_2PI / dt;
-
-        // Periodically check alignment with Hall (optional)
-        Encoder_CheckSyncWithHall();
-    }
+		else if (htim->Instance == TIM5)
+		{
+			
+			EncoderSensor_Update();
+		}
 }
 
-/* Hall sensor capture (TIM4) */
 void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 {
     if (htim->Instance == TIM4 && htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1)
     {
         HallSensor_Update();
-        // If encoder not yet calibrated, use Hall to get a coarse offset
-        if (!Encoder_IsCalibrated()) {
-            Encoder_SyncWithHall();
-        }
     }
-    else if (htim->Instance == TIM12)   // Z pulse capture
-    {
-        Encoder_CalibrateWithZ();   // uses MECH_ANGLE_AT_Z_RAD
-			state_Z++;
-    }
+		else if (htim->Instance == TIM12)
+		{
+		}
 }
 
 
@@ -199,17 +233,24 @@ int main(void)
 		SVPWM_Start();
     HAL_TIM_Base_Start_IT(&TIM_FOC_LOOP);
 		HAL_TIM_Base_Start_IT(&TIM_SPEED_CALC);
-		Encoder_Init();
-		Sensor_Init();
+		/* ======================== Hall sensor ======================== */
+		Hall_Sensor_Init();
 		HallSensor_Update();
-		//adc//
+		/* ======================== Encoder sensor ======================== */
+		Encoder_Sensor_Init();
+		/* ======================== ADC sensor ======================== */
 		ADC_Driver_Init();
-		// usart
+		/* ======================== UART sensor ======================== */
 		MX_USART1_UART_Init();   
 		UART_DMA_Init();   
 		UART_DMA_SendString("UART DMA with IDLE+HT/TC ready\r\n");
-		//pid
-		PID_Init(&pid_curent, 1.0f, 0.5f, 0.1f, 1/MOTOR_SPEED_CALC_FREQ , VDC_BUS/SQRT3, -VDC_BUS/SQRT3);
+		/* ======================== PID ======================== */
+
+		PID_Init(&pid_iq, 0.9f, 1000.0f, 0.0f, 1/MOTOR_SPEED_CALC_FREQ , VDC_BUS/SQRT3, -VDC_BUS/SQRT3);
+		PID_Init(&pid_id, 0.9f, 1000.0f, 0.0f, 1/MOTOR_SPEED_CALC_FREQ , VDC_BUS/SQRT3, -VDC_BUS/SQRT3);
+		PID_Init(&pid_speed, 0.1f, 0.9f, 0.0f, 1/MOTOR_SPEED_CALC_FREQ , 10, -10);
+
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -219,7 +260,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-        //HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_SET);
+
 
     }
   /* USER CODE END 3 */

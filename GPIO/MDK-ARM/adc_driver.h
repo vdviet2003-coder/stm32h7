@@ -13,14 +13,14 @@
 /* ===================== LA-25-NP Configuration ===================== */
 #define LA25NP_TURNS_RATIO      0.003f      /* 3:1000 */
 #define LA25NP_RM               120.0f      /* Measuring resistor (O) */
-#define LA25NP_VOFFSET          -2.88f      /* Offset voltage (V) – from design */
+#define LA25NP_VOFFSET          -2.5f      /* Offset voltage (V) – from design */
 #define LA25NP_AMP_GAIN         0.5f        /* Amplifier gain (absolute value) */
 
 /* ===================== ADC Configuration ===================== */
 #ifndef ADC_VREF
 #define ADC_VREF                3.3f        /* ADC reference voltage (V) ? adjust per board */
 #endif
-#define ADC_RESOLUTION           65536.0f    /* 16-bit ADC */
+#define ADC_RESOLUTION          4096.0f    /* 12-bit ADC */
 
 /* ===================== Conversion Formula ===================== */
 /* From V_ADC = -1/2(120*0.003*Ip + Voffset )  =>  I_P */
