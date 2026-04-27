@@ -1,68 +1,117 @@
 #include "svpwm.h"
 #include "foc_transform.h"
+#include <math.h>
 
 /* Internal static variables */
 static TIM_HandleTypeDef *tim1_handle = NULL;
-static float Vdc = VDC_BUS;           /* DC bus voltage */
-static float Tperiod = 16000.0f;     /* Tperiod (same as MOTOR_PWM_FREQ) */
-static uint32_t max_count = 0;       /* Timer period (auto-reload value) */
+static float Vdc = VDC_BUS;
+static float Tperiod = 1.0f / MOTOR_PWM_FREQ;   /* PWM period (seconds) */
+static uint32_t max_count = 0;                  /* Timer auto-reload value (ARR) */
 
+/* Dead-time compensation parameters */
+#define DEADTIME_US         0.484f      /* 133 / 275 MHz = 0.484 µs */
+#define VDIODE_V            0.8f        /* typical body diode drop */
 
-/* Intermediate variables (kept as in original code) */
-static float agl, agl_radian;
-static float Valpha, Vbeta, Vref;
-static float Ta, Tb, T0, T1, T2;
-static float u, v, w, g;
-static float Tsw1, Tsw2, Tsw3;
-static uint8_t sector;                /* Current sector 1..6 */
+/* Access to global phase currents (defined in main.c) */
 
 /*----------------------------------------------------------------------------
- * SVPWM calculation – identical to original algorithm
+ * Apply dead-time compensation to three-phase duty cycles
  *----------------------------------------------------------------------------*/
-static void SVPWM_Calculate(float Valpha,float Vbeta  )
+static void SVPWM_ApplyDeadtimeComp(float *Ta, float *Tb, float *Tc,float iu, float iv, float iw)
 {
-    arm_sqrt_f32(Valpha * Valpha + Vbeta * Vbeta, &Vref);
-    arm_atan2_f32(Vbeta, Valpha, &agl_radian);
-    agl = agl_radian * (180.0f / M_PI);
+    // Calculate base compensation (as fraction of duty cycle)
+    float Tsw_us = 1.0e6f / MOTOR_PWM_FREQ;     // PWM period in µs
+    float delta_duty_base = DEADTIME_US / Tsw_us;
+    float delta_duty_diode = VDIODE_V / Vdc;
 
-    /* Determine sector */
-    if (agl >= 0 && agl < 60)       sector = 1;
-    else if (agl >= 60 && agl < 120) sector = 2;
-    else if (agl >= 120 && agl < 180) sector = 3;
-    else if (agl >= -180 && agl < -120) sector = 4;
-    else if (agl >= -120 && agl < -60) sector = 5;
-    else if (agl >= -60 && agl < 0) sector = 6;
-    else sector = 0;
+    // Phase A
+    float sign_a = (iu > 0.0f) ? 1.0f : -1.0f;
+    *Ta += delta_duty_base + sign_a * delta_duty_diode;
 
-    /* Calculate active vector times */
-    Ta = T1 = (Tperiod * SQRT3 / Vdc) * Vref * sinf((M_PI * sector / 3.0f) - agl_radian);
-    Tb = T2 = (Tperiod * SQRT3 / Vdc) * Vref * sinf(agl_radian - ((sector - 1) * M_PI / 3.0f));
-    T0 = Tperiod - Ta - Tb;
+    // Phase B
+    float sign_b = (iv > 0.0f) ? 1.0f : -1.0f;
+    *Tb += delta_duty_base + sign_b * delta_duty_diode;
 
-    /* Compute switching times for center-aligned PWM */
-    u = Tperiod - T0 / 2.0f;
-    v = (T0 / 2.0f) + T2;
-    w = T0 / 2.0f;
-    g = (T0 / 2.0f) + T1;
+    // Phase C
+    float sign_c = (iw > 0.0f) ? 1.0f : -1.0f;
+    *Tc += delta_duty_base + sign_c * delta_duty_diode;
 
-    /* Assign phase times based on sector */
-    switch (sector)
-    {
-        case 0: Tsw1 = 0; Tsw2 = 0; Tsw3 = 0; break;
-        case 1: Tsw1 = u; Tsw2 = v; Tsw3 = w; break;
-        case 2: Tsw1 = g; Tsw2 = u; Tsw3 = w; break;
-        case 3: Tsw1 = w; Tsw2 = u; Tsw3 = v; break;
-        case 4: Tsw1 = w; Tsw2 = g; Tsw3 = u; break;
-        case 5: Tsw1 = v; Tsw2 = w; Tsw3 = u; break;
-        case 6: Tsw1 = u; Tsw2 = w; Tsw3 = g; break;
+    // Clamp to [0, 1]
+    *Ta = fmaxf(0.0f, fminf(1.0f, *Ta));
+    *Tb = fmaxf(0.0f, fminf(1.0f, *Tb));
+    *Tc = fmaxf(0.0f, fminf(1.0f, *Tc));
+}
+
+/*----------------------------------------------------------------------------
+ * SVPWM calculation – Based on reference document (Section 5.1)
+ * (Original algorithm unchanged until duty generation)
+ *----------------------------------------------------------------------------*/
+static void SVPWM_Calculate(float Valpha, float Vbeta,float iu, float iv, float iw)
+{
+    // ========================================================================
+    // 1. Sector determination using the Sign Method
+    // ========================================================================
+    float U1 = Vbeta;
+    float U2 = SQRT3_OVER_2 * Valpha - 0.5f * Vbeta;
+    float U3 = -SQRT3_OVER_2 * Valpha - 0.5f * Vbeta;
+
+    int N = 0;
+    if (U1 > 0) N += 1;
+    if (U2 > 0) N += 2;
+    if (U3 > 0) N += 4;
+
+    static const int sector_table[8] = {0, 2, 6, 1, 4, 5, 3, 0};
+    int sector = sector_table[N];
+
+    // ========================================================================
+    // 2. Calculate intermediate variables X, Y, Z (normalized to duty cycle)
+    // ========================================================================
+    float X = SQRT3 * Vbeta / Vdc;
+    float Y = (1.5f * Valpha + 0.5f * SQRT3 * Vbeta) / Vdc;
+    float Z = (1.5f * Valpha - 0.5f * SQRT3 * Vbeta) / Vdc;
+
+    // ========================================================================
+    // 3. Determine Tx and Ty based on sector
+    // ========================================================================
+    float Tx, Ty;
+    switch (sector) {
+        case 1: Tx = Z; Ty = Y; break;
+        case 2: Tx = Y; Ty = -X; break;
+        case 3: Tx = -Z; Ty = X; break;
+        case 4: Tx = -X; Ty = Z; break;
+        case 5: Tx = X; Ty = -Y; break;
+        case 6: Tx = -Y; Ty = -Z; break;
+        default: Tx = 0; Ty = 0; break;
     }
 
-    /* Write compare values to TIM1 CCR registers – same formula as original */
-    if (max_count != 0 && tim1_handle != NULL)
-    {
-        TIM1->CCR1 = (uint32_t)(Tsw1 * max_count / Tperiod);
-        TIM1->CCR2 = (uint32_t)(Tsw2 * max_count / Tperiod);
-        TIM1->CCR3 = (uint32_t)(Tsw3 * max_count / Tperiod);
+    // ========================================================================
+    // 4. Overmodulation handling
+    // ========================================================================
+    float Tsum = Tx + Ty;
+    if (Tsum > 1.0f) {
+        Tx = Tx / Tsum;
+        Ty = Ty / Tsum;
+    }
+
+    // ========================================================================
+    // 5. Calculate three-phase duty cycles (before dead-time compensation)
+    // ========================================================================
+    float Ta = 0.5f + Valpha / Vdc;
+    float Tb = 0.5f + (-0.5f * Valpha + SQRT3_OVER_2 * Vbeta) / Vdc;
+    float Tc = 0.5f + (-0.5f * Valpha - SQRT3_OVER_2 * Vbeta) / Vdc;
+
+    // ========================================================================
+    // 6. Apply dead-time compensation
+    // ========================================================================
+    SVPWM_ApplyDeadtimeComp(&Ta, &Tb, &Tc,iu,iv,iw);
+
+    // ========================================================================
+    // 7. Write compare values to timer registers
+    // ========================================================================
+    if (max_count != 0 && tim1_handle != NULL) {
+        TIM1->CCR1 = (uint32_t)(Ta * max_count);
+        TIM1->CCR2 = (uint32_t)(Tb * max_count);
+        TIM1->CCR3 = (uint32_t)(Tc * max_count);
     }
 }
 
@@ -77,11 +126,10 @@ void SVPWM_Init(TIM_HandleTypeDef *htim, float vdc, float tperiod, uint32_t peri
     max_count = period_count;
 }
 
-
-void SVPWM_Update(float Valpha,float Vbeta )
+void SVPWM_Update(float Valpha, float Vbeta, float iu, float iv, float iw)
 {
     if (tim1_handle == NULL) return;
-    SVPWM_Calculate( Valpha, Vbeta );
+    SVPWM_Calculate(Valpha, Vbeta, iu, iv, iw);
 }
 
 void SVPWM_Start(void)

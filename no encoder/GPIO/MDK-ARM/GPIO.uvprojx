@@ -1191,6 +1191,56 @@
               <FileType>1</FileType>
               <FilePath>.\pid.c</FilePath>
             </File>
+            <File>
+              <FileName>pi_control.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\pi_control.h</FilePath>
+            </File>
+            <File>
+              <FileName>pi_control.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\pi_control.c</FilePath>
+            </File>
+            <File>
+              <FileName>scurve_ramp.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\scurve_ramp.h</FilePath>
+            </File>
+            <File>
+              <FileName>scurve_ramp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\scurve_ramp.c</FilePath>
+            </File>
+            <File>
+              <FileName>multi_ramp.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\multi_ramp.h</FilePath>
+            </File>
+            <File>
+              <FileName>multi_ramp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\multi_ramp.c</FilePath>
+            </File>
+            <File>
+              <FileName>ramp_soft_start.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\ramp_soft_start.h</FilePath>
+            </File>
+            <File>
+              <FileName>ramp_soft_start.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\ramp_soft_start.c</FilePath>
+            </File>
+            <File>
+              <FileName>smo.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\smo.h</FilePath>
+            </File>
+            <File>
+              <FileName>smo.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\smo.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

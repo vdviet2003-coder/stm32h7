@@ -67,4 +67,5 @@ gpio/main.o: ..\Core\Src\main.c ..\Core\Inc\main.h \
   C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdio.h \
   C:\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdlib.h ..\MDK-ARM\sensor.h \
   ..\MDK-ARM\adc_driver.h ..\MDK-ARM\svpwm.h ..\MDK-ARM\uart_dma_lib.h \
-  ..\MDK-ARM\pid.h ..\MDK-ARM\foc_transform.h
+  ..\MDK-ARM\pid.h ..\MDK-ARM\foc_transform.h ..\MDK-ARM\pi_control.h \
+  ..\MDK-ARM\scurve_ramp.h ..\MDK-ARM\multi_ramp.h ..\MDK-ARM\smo.h

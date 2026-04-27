@@ -19,7 +19,7 @@ void SVPWM_Init(TIM_HandleTypeDef *htim, float vdc, float tperiod, uint32_t peri
  * @param angle_radian: electrical angle (rad) – obtained from Sensor_GetElectricalAngle()
  * @note This function directly writes to TIM1 CCR1, CCR2, CCR3 registers
  */
-void SVPWM_Update(float Valpha,float Vbeta );
+void SVPWM_Update(float Valpha, float Vbeta, float iu, float iv, float iw);
 
 /**
  * @brief Start PWM outputs (all channels and complementary channels)

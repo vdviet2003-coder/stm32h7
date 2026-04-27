@@ -37,7 +37,10 @@
 #include "uart_dma_lib.h"
 #include "pid.h"
 #include "foc_transform.h"
-
+#include "pi_control.h"
+#include "scurve_ramp.h"
+#include "multi_ramp.h"
+#include "smo.h"
 
 /* USER CODE END Includes */
 
@@ -45,8 +48,14 @@
 /* USER CODE BEGIN PTD */
 /*PID*/
 PID_HandleTypeDef pid_speed;
-PID_HandleTypeDef pid_curent;
+PID_HandleTypeDef pid_id;
+PID_HandleTypeDef pid_iq;
 
+PI_Clamping pi_speed;
+PI_Clamping pi_id;
+PI_Clamping pi_iq;
+SCurve_Profile s_ramp;
+MultiRamp_Gen ramp;
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -63,62 +72,267 @@ PID_HandleTypeDef pid_curent;
 
 /* USER CODE BEGIN PV */
 		/* Sensor variables */
-float elec_angle_rad;          /* Electrical angle (rad) */
-float mech_angle_rad;          /* Mechanical angle (rad) */
+float elec_angle_rad_hall;          /* Electrical angle (rad) */
+float elec_angle_rad_encoder;          
+float mech_angle_rad_encoder;          /* Mechanical angle (rad) */
 float mech_angle_deg;
-float elec_angle_deg;  
-float velocity_rads;           /* Angular velocity (rad/s) */
+float elec_angle_deg; 
+float raw_angle;
+
+
 uint8_t hall_step;             /* Current Hall step (1..6) */
-uint16_t z_counter;             /* Z pulse counter */
-uint32_t max_count;
+
 /* Current measurement variables */
-float i1, i2,i3;                  								 /* Phase A, B,C currents (A) */
+float iu, iv,iw;                  								 /* Phase A, B,C currents (A) */
+
 float i_alpha, i_beta , v_alpha , v_beta;          /* Stationary frame currents */
-float i_d = 0 , i_q = 0 , i_q_ref = 0;             /* Rotating frame currents */
-float v_d = 0 , v_q = -20.0f;
-int cnt = 0;
+
+float i_d = 0 , i_q = 0 , i_q_ref = 0 , i_d_ref = 0;             /* Rotating frame currents */
+   
+
+float v_d = 0.0f , v_q = 0.0f;
+
 int state = 0;
+
 int state_Z=0;
+
+int dir =1;
+float threshold;
+
 /*PID*/
+float speed_mechanic_rad;
+float speed_ref_rpm = 1000.0f;      // T?c d? d?t (RPM)
+float speed_mechanic_rpm = 0.0f;    // T?c d? h?i ti?p (RPM)
+float speed_ref_rads = 100; // setpoint speed rad/s
+
+//smo
+
+//smo
+typedef enum {
+    SS_ALIGN = 0,
+    SS_OPENLOOP,
+    SS_SWITCH,
+    SS_RUN
+} SensorlessSubState;
+
+SensorlessSubState state_smo = SS_ALIGN;
+float ss_align_timer = 0.0f;
+float ss_openloop_theta = 0.0f;
+float ss_openloop_omega = 0.0f;
+float ss_switch_timer = 0.0f;
+
+SMO_Handle smo;                 // Đối tượng SMO toàn cục
+float theta_smo, omega_smo;     // Góc và tốc độ từ SMO
+
+float speed_mechanic_rad_smo;
+
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MPU_Config(void);
 /* USER CODE BEGIN PFP */
+void Calib(void);
+void Align_Process(void);
+float value_offset;
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 /* FOC loop interrupt (e.g., 10 kHz) */
+
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-    if (htim->Instance == TIM2)   // FOC loop (10kHz)
+    if (htim->Instance == TIM6)   // FOC loop (10kHz)
     {
-        elec_angle_rad = Sensor_GetElectricalAngle();
-        mech_angle_rad = Sensor_GetMechanicalAngle();
-        hall_step = Hall_GetStep();
+				value_offset =ADC_Driver_GetOffset_IV();
+        elec_angle_rad_hall = Sensor_Get_Electrical_Angle_Hall();
+				
+				raw_angle = Encoder_Get_Raw_Angle();
+				elec_angle_rad_encoder = Encoder_Get_Electric_Angle();
+				mech_angle_rad_encoder = Encoder_Get_Mechanic_Angle();
+				hall_step = Hall_GetStep();
+			
+        
+				speed_mechanic_rad = Encoder_Get_Mechanic_Speed();
+        float omega_e = speed_mechanic_rad * POLE_PAIRS;
 
-        // �?c d�ng di?n
-        i1 = ADC_Driver_GetCurrents_1();
-        i2 = ADC_Driver_GetCurrents_2();
-        i3 = ADC_Driver_GetCurrents_3();
+        // ----- D? do�n g�c di?n (b� tr?) -----
+        float Ts = 1.0f / MOTOR_SPEED_CALC_FREQ;          // 25e-6 s
+        float t_delay = 3.87e-6f;                         // 3.87 �s
+        float theta_pred = elec_angle_rad_encoder + omega_e * (Ts + t_delay);
+        theta_pred = fmodf(theta_pred, 2.0f * M_PI);
+        if (theta_pred < 0.0f) theta_pred += 2.0f * M_PI;
+        
+        iu = ADC_Driver_GetCurrents_1();
+        iv = ADC_Driver_GetCurrents_2();
+        iw = ADC_Driver_GetCurrents_3();
+				
 
-        if (state == 1) {
-            HAL_GPIO_WritePin(GPIOF, GPIO_PIN_9, GPIO_PIN_SET);
-            FOC_InvPark(v_q, v_d, elec_angle_rad, &v_alpha, &v_beta);
-            SVPWM_Update(v_alpha, v_beta);
-        } else {
-            HAL_GPIO_WritePin(GPIOF, GPIO_PIN_9, GPIO_PIN_RESET);
+				  if (state == 1) 
+					{
+						HAL_GPIO_WritePin(GPIOF, GPIO_PIN_9, GPIO_PIN_SET);
+					FOC_InvPark(0.8, 0, 0, &v_alpha, &v_beta);
+					SVPWM_Update(v_alpha, v_beta, iu, iv, iw); 
+					Encoder_Reset();
+					v_d=0;
+					v_q=0;	
+					} 
+					else if (state==2) {
+						HAL_GPIO_WritePin(GPIOF, GPIO_PIN_9, GPIO_PIN_SET);
+					HAL_GPIO_WritePin(GPIOG, GPIO_PIN_2, GPIO_PIN_SET);
+					//SCurve_Update(&s_ramp, speed_ref_rads);
+					MultiRamp_Update(&ramp,speed_ref_rads);
+
+					FOC_Clarke(iu, iv, iw, &i_alpha, &i_beta);
+					FOC_Park(i_alpha, i_beta, theta_pred, &i_d, &i_q);
+
+
+					i_q_ref = PID_Compute(&pid_speed, speed_ref_rads, speed_mechanic_rad);
+					v_q = PID_Compute(&pid_iq, i_q_ref, i_q);
+					v_d = PID_Compute(&pid_id, 0,i_d);
+						
+//						i_q_ref = PI_Update(&pi_speed,speed_ref_rads,speed_mechanic_rad);
+//						v_q = PI_Update(&pi_iq,i_q_ref, i_q);
+//						v_d = PI_Update(&pi_id,0, i_d);
+					FOC_InvPark(v_d, v_q, theta_pred, &v_alpha, &v_beta);
+					SVPWM_Update(v_alpha, v_beta, iu, iv, iw);
+						
+				
+					HAL_GPIO_WritePin(GPIOG, GPIO_PIN_2, GPIO_PIN_RESET);	
+
+					}	
+					else if(state ==3){
+						HAL_GPIO_WritePin(GPIOF, GPIO_PIN_9, GPIO_PIN_SET);
+						FOC_InvPark(v_d, v_q, elec_angle_rad_encoder, &v_alpha, &v_beta);
+						SVPWM_Update(v_alpha, v_beta, iu, iv, iw);
+					}
+else if (state == 4) {
+    HAL_GPIO_WritePin(GPIOF, GPIO_PIN_9, GPIO_PIN_SET);
+    float dt = 1.0f / MOTOR_SPEED_CALC_FREQ;
+
+    // 1. Đọc dòng và biến đổi Clarke
+    FOC_Clarke(iu, iv, iw, &i_alpha, &i_beta);
+
+    // 2. Xác định góc, dòng đặt và trạng thái khởi động
+    float theta_e, omega_e;
+    float id_ref_local = 0.0f, iq_ref_local = 0.0f;
+
+    switch (state_smo) {
+        case SS_ALIGN: {
+            // Căn chỉnh rotor: Id = 0.8A, Iq = 0, góc = 0 rad trong 1 giây
+            theta_e = 0.0f;
+            omega_e = 0.0f;
+            id_ref_local = 0.8f;
+            iq_ref_local = 0.0f;
+
+            ss_align_timer += dt;
+            if (ss_align_timer >= 1.0f) {
+                state_smo = SS_OPENLOOP;
+                ss_openloop_omega = 0.0f;
+                ss_openloop_theta = 0.0f;
+                ss_align_timer = 0.0f;
+            }
+            break;
+        }
+
+        case SS_OPENLOOP: {
+            // Tăng tốc ảo (100 rad/s mỗi giây)
+            ss_openloop_omega += 100.0f * dt;
+            ss_openloop_theta += ss_openloop_omega * dt;
+            ss_openloop_theta = fmodf(ss_openloop_theta, 2.0f * M_PI);
+            if (ss_openloop_theta < 0) ss_openloop_theta += 2.0f * M_PI;
+
+            // Dùng góc ảo để điều khiển, SMO chạy nền (chỉ để hội tụ)
+            theta_e = ss_openloop_theta;
+            omega_e = ss_openloop_omega;
+            id_ref_local = 0.8f;   // giữ dòng từ hóa
+            iq_ref_local = 0.0f;   // không mô‑men
+
+            // Điều kiện chuyển: tốc độ ảo đạt omega_min (167.5 rad/s điện với 400rpm, 4 cặp cực)
+            if (ss_openloop_omega >= smo.omega_min) {
+                state_smo = SS_SWITCH;
+                ss_switch_timer = 0.0f;
+            }
+            break;
+        }
+
+        case SS_SWITCH: {
+            // Vẫn open‑loop, chờ SMO hội tụ (kiểm tra sai số dòng)
+            theta_e = ss_openloop_theta;
+            omega_e = ss_openloop_omega;
+            id_ref_local = 0.8f;
+            iq_ref_local = 0.0f;
+
+            // Điều kiện chuyển sang vòng kín: dòng ước lượng bám sát dòng thực
+            if (fabsf(smo.ialpha_est - i_alpha) < 0.3f &&
+                fabsf(smo.ibeta_est - i_beta) < 0.3f) {
+                state_smo = SS_RUN;
+            }
+            break;
+        }
+
+        case SS_RUN: {
+            // Vòng kín sensorless: dùng góc và tốc độ từ SMO
+            theta_e = SMO_GetCompensatedTheta(&smo);
+            omega_e = SMO_GetOmega(&smo);
+            id_ref_local = 0.0f;   // Id = 0 control
+            speed_mechanic_rad_smo = omega_e / POLE_PAIRS;
+            iq_ref_local = PID_Compute(&pid_speed, speed_ref_rads, speed_mechanic_rad_smo);
+            break;
         }
     }
+
+    // 3. Biến đổi Park với góc đã chọn
+    FOC_Park(i_alpha, i_beta, theta_e, &i_d, &i_q);
+
+    // 4. Vòng điều khiển dòng điện (PID)
+    v_d = PID_Compute(&pid_id, id_ref_local, i_d);
+    v_q = PID_Compute(&pid_iq, iq_ref_local, i_q);
+
+    // 5. Park nghịch → điện áp alpha/beta
+    FOC_InvPark(v_d, v_q, theta_e, &v_alpha, &v_beta);
+
+    // 6. Luôn cập nhật SMO với điện áp và dòng đo được (đúng bài báo)
+    SMO_Update(&smo, v_alpha, v_beta, i_alpha, i_beta, dt);
+
+    // 7. Cập nhật PWM
+    SVPWM_Update(v_alpha, v_beta, iu, iv, iw);
+}
+
+					else if(state ==0){
+						
+
+						
+						HAL_GPIO_WritePin(GPIOF, GPIO_PIN_9, GPIO_PIN_RESET);
+						v_alpha = 0.0f; v_beta = 0.0f;
+						SVPWM_Update(v_alpha, v_beta, iu, iv, iw);
+						// Reset sensorless state
+						state_smo = SS_ALIGN;
+						ss_align_timer = 0.0f;
+					}
+    }
+		else if (htim->Instance == TIM3)
+		{
+			EncoderSensor_Update();
+		}
 }
 
 void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 {
-    if (htim->Instance == TIM4 && htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1)
+    if (htim->Instance == TIM5 && htim->Channel == HAL_TIM_ACTIVE_CHANNEL_3)
+    {
+        uint32_t cap_val = HAL_TIM_ReadCapturedValue(&htim5, TIM_CHANNEL_3);
+        Encoder_Capture_Handler(cap_val);
+    }
+    else if (htim->Instance == TIM4 && htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1)
     {
         HallSensor_Update();
+    }
+    else if (htim->Instance == TIM12)
+    {
+        // Z-pulse nếu cần
     }
 }
 
@@ -169,32 +383,53 @@ int main(void)
   MX_TIM12_Init();
   MX_TIM6_Init();
   /* USER CODE BEGIN 2 */
+
 		//center-alinge
 		SVPWM_Init(&htim1, VDC_BUS, (float)MOTOR_PWM_FREQ, htim1.Init.Period);
 		SVPWM_Start();
     HAL_TIM_Base_Start_IT(&TIM_FOC_LOOP);
 		HAL_TIM_Base_Start_IT(&TIM_SPEED_CALC);
-		//Encoder_Init();
-		Sensor_Init();
-		HallSensor_Update();
-		//adc//
+		/* ======================== ADC sensor ======================== */
 		ADC_Driver_Init();
-		// usart
+		ADC_Driver_CalibrateOffset();
+		/* ======================== Hall sensor ======================== */
+		Hall_Sensor_Init();
+		HallSensor_Update();
+		/* ======================== Encoder sensor ======================== */
+		Encoder_Sensor_Init();
+
+		/* ======================== UART sensor ======================== */
 		MX_USART1_UART_Init();   
 		UART_DMA_Init();   
 		UART_DMA_SendString("UART DMA with IDLE+HT/TC ready\r\n");
-		//pid
-		PID_Init(&pid_curent, 1.0f, 0.5f, 0.1f, 1/MOTOR_SPEED_CALC_FREQ , VDC_BUS/SQRT3, -VDC_BUS/SQRT3);
+		/* ======================== PID ======================== */
+			
+		PID_Init(&pid_iq, 12.0f, 5830.0f, 0.0f, 1/MOTOR_SPEED_CALC_FREQ , VDC_BUS/SQRT3, -VDC_BUS/SQRT3);
+		PID_Init(&pid_id, 12.0f, 5830.0f, 0.0f, 1/MOTOR_SPEED_CALC_FREQ , VDC_BUS/SQRT3, -VDC_BUS/SQRT3);
+		//PID_Init(&pid_speed, 0.06f, 0.0005f, 0.0f, 1/MOTOR_SPEED_CALC_FREQ , 2.8, -2.8);
+		PID_Init(&pid_speed, 0.0053f, 2.37f, 0.0f, 1/MOTOR_SPEED_CALC_FREQ, 2.8f, -2.8f); 
+		PI_Init(&pi_speed,0.1125,0.9375,1/MOTOR_SPEED_CALC_FREQ,10.0f,-10.0f);
+		PI_Init(&pi_id,237.6697,11330,1/MOTOR_SPEED_CALC_FREQ,VDC_BUS/SQRT3,-VDC_BUS/SQRT3);
+		PI_Init(&pi_iq,237.6697,11330,1/MOTOR_SPEED_CALC_FREQ,VDC_BUS/SQRT3,-VDC_BUS/SQRT3);
+		
+		SCurve_Init(&s_ramp,1/MOTOR_SPEED_CALC_FREQ,1,1,1);
+		
+		MultiRamp_Init(&ramp,1/MOTOR_SPEED_CALC_FREQ,5,10,10,20,20);
+		/* ======================== SMO ======================== */
+		
+		SMO_Init(&smo, MOTOR_RS, MOTOR_LS, MOTOR_PSI_F, POLE_PAIRS,
+         3000.0f, 900.0f, 1.0f / MOTOR_SPEED_CALC_FREQ);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-    while (1)
+     while (1)
     {
+		
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-        //HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_SET);
+
 
     }
   /* USER CODE END 3 */
