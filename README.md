@@ -343,8 +343,14 @@ static inline float sign_function(float x, float deadzone) {
 ```
 
 Ngõ ra khuếch đại trượt:
-$$z_\alpha = K_s \cdot \text{sign\_dz}(i_{\alpha,est} - i_\alpha, \ 0.1\,\text{A})$$
-$$z_\beta  = K_s \cdot \text{sign\_dz}(i_{\beta,est}  - i_\beta,  \ 0.1\,\text{A})$$
+
+$$
+z_{\alpha} = K_s \cdot \operatorname{sign}(i_{\alpha,est} - i_{\alpha},\ 0.1\,\mathrm{A})
+$$
+
+$$
+z_{\beta}  = K_s \cdot \operatorname{sign}(i_{\beta,est}  - i_{\beta},\ 0.1\,\mathrm{A})
+$$
 
 Hệ số trượt $K_s$ chọn đủ lớn để đảm bảo điều kiện trượt:
 $$K_s = 1.5 \cdot \omega_{max,elec} \cdot \psi_f \quad [\text{V}]$$
@@ -365,8 +371,14 @@ Khi đạt chế độ trượt ($s_\alpha \to 0$, $s_\beta \to 0$), $z_\alpha \
 #### Bước 3 – Lọc thông thấp trích xuất back-EMF
 
 Bộ lọc IIR bậc 1 (forward Euler) với $f_c$ = 500 Hz:
-$$\hat{e}_\alpha[k] = \alpha_f \cdot z_\alpha + (1-\alpha_f) \cdot \hat{e}_\alpha[k-1]$$
-$$\hat{e}_\beta[k]  = \alpha_f \cdot z_\beta  + (1-\alpha_f) \cdot \hat{e}_\beta[k-1]$$
+
+$$
+\hat{e}_{\alpha}[k] = \alpha_f \cdot z_{\alpha} + (1-\alpha_f) \cdot \hat{e}_{\alpha}[k-1]
+$$
+
+$$
+\hat{e}_{\beta}[k] = \alpha_f \cdot z_{\beta} + (1-\alpha_f) \cdot \hat{e}_{\beta}[k-1]
+$$
 
 Hệ số lọc:
 $$\alpha_f = \frac{\omega_c T_s}{1 + \omega_c T_s}, \quad \omega_c = 2\pi \times 500 \approx 3141.6\,\text{rad/s}$$
@@ -380,7 +392,10 @@ Tại $T_s = 25\,\mu\text{s}$: $\alpha_f \approx 0.0728$
 #### Bước 4 – PLL ước lượng góc và tốc độ
 
 Tín hiệu lỗi PLL (cross-product):
-$$\varepsilon = \hat{e}_\beta \cos\hat{\theta} - \hat{e}_\alpha \sin\hat{\theta}$$
+
+$$
+\varepsilon = \hat{e}_{\beta} \cos\hat{\theta} - \hat{e}_{\alpha} \sin\hat{\theta}
+$$
 
 Khi hội tụ: $\hat{\theta} \to \theta_{real}$ → $\varepsilon \to 0$.
 
