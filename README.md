@@ -345,11 +345,11 @@ static inline float sign_function(float x, float deadzone) {
 Ngõ ra khuếch đại trượt:
 
 $$
-z_{\alpha} = K_s \cdot \operatorname{sign}(i_{\alpha,est} - i_{\alpha},\ 0.1\,\mathrm{A})
+z_{\alpha} = K_s \cdot \text{sign}(i_{\alpha,est} - i_{\alpha},\ 0.1\,\text{A})
 $$
 
 $$
-z_{\beta}  = K_s \cdot \operatorname{sign}(i_{\beta,est}  - i_{\beta},\ 0.1\,\mathrm{A})
+z_{\beta} = K_s \cdot \text{sign}(i_{\beta,est} - i_{\beta},\ 0.1\,\text{A})
 $$
 
 Hệ số trượt $K_s$ chọn đủ lớn để đảm bảo điều kiện trượt:
