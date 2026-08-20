@@ -3,7 +3,8 @@
 Firmware điều khiển động cơ PMSM theo phương pháp **Field-Oriented Control (FOC) không cảm biến vị trí (sensorless)** chạy trên vi điều khiển **STM32H723ZGTx**, sử dụng Sliding Mode Observer (SMO) để ước lượng góc và tốc độ rotor.
 
 ---
-
+![alt text](216ec2bf-167b-47e1-85dc-fa5c30dc4392-1.jpg)
+![alt text](1767862051895_2149878718911220794_4037829508188108262_9d0ae4dbb1c9cfefcfec607046db3e9c-1.jpg)
 ## Mục lục
 
 1. [Tổng quan hệ thống](#1-tổng-quan-hệ-thống)
