@@ -1,0 +1,15 @@
+Min conductor Spacing ( khoảng cách tối thiểu )
++ 541V 	      :0.9251 mm  chọn 1mm
++ 24V,5V,3V3  :0.05   mm
+Fusing Current (Dòng điện cháy đường dẫn)
++ 80A 	      : 6 mm
++ 6.5A	      : 0.6 mm
+Conductor Properties (Đặc tính đường dẫn)
+
+
+Thermal Management (Quản lý nhiệt)
+Via Properties (Đặc tính lỗ thông tầng)
+Conductor Impedance (Trở kháng đường dẫn)
+Differential Pairs / XTALK (Cặp vi sai và nhiễu chéo)
+PDN Calculator (Tính toán mạng phân phối điện)
+Bandwidth & Max Er Effective Length (Băng thông và độ dài hiệu quả)

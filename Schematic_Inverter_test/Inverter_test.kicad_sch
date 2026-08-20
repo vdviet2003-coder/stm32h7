@@ -1,0 +1,2161 @@
+(kicad_sch
+	(version 20250114)
+	(generator "eeschema")
+	(generator_version "9.0")
+	(uuid "bb8456c6-cb9e-43f6-bac1-343966810da5")
+	(paper "A4")
+	(lib_symbols
+		(symbol "Mechanical:MountingHole"
+			(pin_names
+				(offset 1.016)
+			)
+			(exclude_from_sim yes)
+			(in_bom no)
+			(on_board yes)
+			(property "Reference" "H"
+				(at 0 5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "MountingHole"
+				(at 0 3.175 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "~"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Mounting Hole without connection"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "mounting hole"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "MountingHole*"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "MountingHole_0_1"
+				(circle
+					(center 0 0)
+					(radius 1.27)
+					(stroke
+						(width 1.27)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+	)
+	(text "Its act an interface between the hierachical Label"
+		(exclude_from_sim no)
+		(at 65.278 25.654 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "1c6d11af-36e1-47d8-85ff-9c6b56cfc2de")
+	)
+	(text "Global lable makes connection any where in the schematic\n"
+		(exclude_from_sim no)
+		(at 66.548 19.558 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "4f366916-c14a-47ab-9734-5a76214cf6a5")
+	)
+	(text "Local makes connection within the sheets\n"
+		(exclude_from_sim no)
+		(at 54.356 14.478 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "e06e5d50-a5ef-42f2-9c34-06d42b998250")
+	)
+	(junction
+		(at 160.02 83.82)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "07f25d66-36f1-4c44-82b4-9ac259b2577f")
+	)
+	(junction
+		(at 160.02 133.35)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "42af9e4e-c346-47ba-a706-b939d42e2bea")
+	)
+	(junction
+		(at 160.02 107.95)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "7e295a2d-2b09-4d4f-9a20-8cfc4eb3e6c7")
+	)
+	(junction
+		(at 160.02 59.69)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "f78b0959-4f84-49ae-b612-5bd25121be5d")
+	)
+	(wire
+		(pts
+			(xy 144.78 93.98) (xy 170.18 93.98)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "07bee5d4-bb16-4066-bae8-02b44fbae665")
+	)
+	(wire
+		(pts
+			(xy 207.01 99.06) (xy 217.17 99.06)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "125109fc-8fe7-4f86-8635-94ff796f8dfa")
+	)
+	(wire
+		(pts
+			(xy 160.02 83.82) (xy 170.18 83.82)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1c4bfd9e-887d-404f-aa45-6faff2d97163")
+	)
+	(wire
+		(pts
+			(xy 207.01 45.72) (xy 217.17 45.72)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1df8fe11-09a7-4a39-825d-0eb9eb38c388")
+	)
+	(wire
+		(pts
+			(xy 160.02 83.82) (xy 160.02 107.95)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "21e13cd0-a0dc-46e8-ac3f-eca6a9926466")
+	)
+	(wire
+		(pts
+			(xy 144.78 26.67) (xy 170.18 26.67)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2726ffc7-e840-4ef8-91c1-9329edd8093d")
+	)
+	(wire
+		(pts
+			(xy 207.01 104.14) (xy 217.17 104.14)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "29b69736-809d-40e4-a2c6-7d1c6361ac34")
+	)
+	(wire
+		(pts
+			(xy 207.01 80.01) (xy 217.17 80.01)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2aba361b-b760-44a2-a182-b7b5fb7ee9e6")
+	)
+	(wire
+		(pts
+			(xy 144.78 99.06) (xy 170.18 99.06)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2b995fc1-54ee-4755-a3d3-96dce549529c")
+	)
+	(wire
+		(pts
+			(xy 144.78 69.85) (xy 170.18 69.85)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2cdaa9fb-3027-46f0-b1f2-c5863ac9bfab")
+	)
+	(wire
+		(pts
+			(xy 160.02 35.56) (xy 160.02 59.69)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "33e3f6e5-ff77-494a-ac6c-b5280364a300")
+	)
+	(wire
+		(pts
+			(xy 144.78 119.38) (xy 170.18 119.38)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "3a40237c-d37e-464c-bda4-f1d7d84a46d4")
+	)
+	(wire
+		(pts
+			(xy 170.18 59.69) (xy 160.02 59.69)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "469aed3a-0a9e-47e1-9677-0b134c6880ca")
+	)
+	(wire
+		(pts
+			(xy 160.02 133.35) (xy 160.02 107.95)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "48d7e204-2c23-4e5a-8b59-289bb7e413d1")
+	)
+	(wire
+		(pts
+			(xy 170.18 35.56) (xy 160.02 35.56)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "4ec597ee-e8c0-48e5-a9d4-371e376b4ee9")
+	)
+	(wire
+		(pts
+			(xy 144.78 74.93) (xy 170.18 74.93)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "5041a819-1b34-4487-975a-1efcbe706f71")
+	)
+	(wire
+		(pts
+			(xy 207.01 154.94) (xy 217.17 154.94)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "52988f2d-642f-40f7-a4ac-1a01d4cf1a98")
+	)
+	(wire
+		(pts
+			(xy 207.01 26.67) (xy 217.17 26.67)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "61e85665-75a4-408f-b1af-a4d29052b18c")
+	)
+	(wire
+		(pts
+			(xy 207.01 55.88) (xy 217.17 55.88)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6d1ca30a-4f4a-4cf3-bb2a-293b1401db95")
+	)
+	(wire
+		(pts
+			(xy 207.01 31.75) (xy 217.17 31.75)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6fd5d0fa-0ffc-411d-8a21-be29052c4395")
+	)
+	(wire
+		(pts
+			(xy 207.01 149.86) (xy 217.17 149.86)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "743aa68a-b3c4-4c9a-bc73-641797315ea5")
+	)
+	(wire
+		(pts
+			(xy 170.18 133.35) (xy 160.02 133.35)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "759810b1-30b1-42ee-8028-15c2056e3ff2")
+	)
+	(wire
+		(pts
+			(xy 207.01 50.8) (xy 217.17 50.8)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "79337d99-055b-4f0d-bd54-87ad1b9df127")
+	)
+	(wire
+		(pts
+			(xy 144.78 50.8) (xy 170.18 50.8)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "79b8d068-b8ba-400d-bb99-e497a8f2d1a4")
+	)
+	(wire
+		(pts
+			(xy 207.01 119.38) (xy 217.17 119.38)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7d637208-b1cd-4731-b57f-75735b48d27d")
+	)
+	(wire
+		(pts
+			(xy 160.02 158.75) (xy 160.02 133.35)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "85db84df-55d6-42cd-a6dd-d117bc99e2fd")
+	)
+	(wire
+		(pts
+			(xy 144.78 144.78) (xy 170.18 144.78)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "89753130-7944-4e8b-aeb6-052ce2fcd2c8")
+	)
+	(wire
+		(pts
+			(xy 144.78 83.82) (xy 160.02 83.82)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "8ebfcf38-d64b-4079-865a-e90e152465ae")
+	)
+	(wire
+		(pts
+			(xy 144.78 129.54) (xy 170.18 129.54)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "92b9c2ca-f882-4027-a677-13e2da40cea0")
+	)
+	(wire
+		(pts
+			(xy 207.01 21.59) (xy 217.17 21.59)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "979d766f-ce68-4f9b-bab2-56ddd62e198a")
+	)
+	(wire
+		(pts
+			(xy 144.78 154.94) (xy 170.18 154.94)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "97b697da-b4a6-4722-a30d-59a7a1161415")
+	)
+	(wire
+		(pts
+			(xy 144.78 149.86) (xy 170.18 149.86)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "9bf4e6dc-958c-4987-87a1-bf263a72b365")
+	)
+	(wire
+		(pts
+			(xy 207.01 93.98) (xy 217.17 93.98)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "a2c23787-e473-41f2-87ff-fceebdb9d68a")
+	)
+	(wire
+		(pts
+			(xy 160.02 59.69) (xy 160.02 83.82)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "a669aa33-ac25-4861-836a-a703aa8da263")
+	)
+	(wire
+		(pts
+			(xy 144.78 31.75) (xy 170.18 31.75)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "a720f7a6-b9ad-4318-ab8e-9e5b5aff51b3")
+	)
+	(wire
+		(pts
+			(xy 207.01 69.85) (xy 217.17 69.85)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "abf25591-ec2f-440a-aff1-e0761d56c16b")
+	)
+	(wire
+		(pts
+			(xy 144.78 80.01) (xy 170.18 80.01)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "bdf14fcf-2551-4458-84c8-badcf53ca881")
+	)
+	(wire
+		(pts
+			(xy 144.78 45.72) (xy 170.18 45.72)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "be85ea45-c217-446e-82d2-8b83fa9d0465")
+	)
+	(wire
+		(pts
+			(xy 207.01 129.54) (xy 217.17 129.54)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d64b3478-9f57-4feb-911c-a18a07131f9b")
+	)
+	(wire
+		(pts
+			(xy 144.78 104.14) (xy 170.18 104.14)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d66dbe86-73fe-4606-bda9-1f949d52c71e")
+	)
+	(wire
+		(pts
+			(xy 144.78 55.88) (xy 170.18 55.88)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "dec135e2-a835-4c33-8a5e-94c29122ade9")
+	)
+	(wire
+		(pts
+			(xy 207.01 144.78) (xy 217.17 144.78)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e040eb75-7c25-4f05-a15f-0ffb8385a77b")
+	)
+	(wire
+		(pts
+			(xy 207.01 74.93) (xy 217.17 74.93)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e5f29864-ebff-4c23-a777-da5e1f1005d8")
+	)
+	(wire
+		(pts
+			(xy 170.18 158.75) (xy 160.02 158.75)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ee19125e-190b-46ca-b400-ad96bb013953")
+	)
+	(wire
+		(pts
+			(xy 144.78 124.46) (xy 170.18 124.46)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f4364e29-b1a2-4a86-9d0a-9924d6755b91")
+	)
+	(wire
+		(pts
+			(xy 144.78 21.59) (xy 170.18 21.59)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f583fc99-069c-4ad4-bfba-906db85ffd1d")
+	)
+	(wire
+		(pts
+			(xy 170.18 107.95) (xy 160.02 107.95)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f65de89f-86aa-4c5a-afe0-358073501b07")
+	)
+	(wire
+		(pts
+			(xy 207.01 124.46) (xy 217.17 124.46)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "fb77c17c-df27-46bf-8ab5-71b488e1b852")
+	)
+	(label "Local Lable "
+		(at 21.59 15.24 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "7076d5f4-4bfa-48a4-b7b3-e9f72360797e")
+	)
+	(global_label "Global Lable "
+		(shape input)
+		(at 21.59 19.05 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "5a7a1938-db5c-494b-ac11-710290935831")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 37.6377 19.05 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(hierarchical_label "Hierachical Lable "
+		(shape tri_state)
+		(at 21.59 25.4 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "faefc060-21b1-48bf-9cff-763d3b89dbd4")
+	)
+	(symbol
+		(lib_id "Mechanical:MountingHole")
+		(at 66.04 128.27 0)
+		(unit 1)
+		(exclude_from_sim yes)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "0a01ce2a-6975-4c7e-8754-48b55c3a5b9e")
+		(property "Reference" "H3"
+			(at 68.58 126.9999 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "MountingHole"
+			(at 68.58 129.5399 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "MountingHole:MountingHole_3.2mm_M3"
+			(at 66.04 128.27 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 66.04 128.27 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Mounting Hole without connection"
+			(at 66.04 128.27 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "Inverter_test"
+				(path "/bb8456c6-cb9e-43f6-bac1-343966810da5"
+					(reference "H3")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Mechanical:MountingHole")
+		(at 66.04 140.97 0)
+		(unit 1)
+		(exclude_from_sim yes)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(uuid "16fcff3b-7007-4127-8c4d-2340555fd88b")
+		(property "Reference" "H5"
+			(at 68.58 139.6999 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "MountingHole"
+			(at 68.58 142.2399 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "MountingHole:MountingHole_3.2mm_M3"
+			(at 66.04 140.97 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 66.04 140.97 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Mounting Hole without connection"
+			(at 66.04 140.97 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "Inverter_test"
+				(path "/bb8456c6-cb9e-43f6-bac1-343966810da5"
+					(reference "H5")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Mechanical:MountingHole")
+		(at 66.04 115.57 0)
+		(unit 1)
+		(exclude_from_sim yes)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "1f3d8370-d46c-433d-81e2-4d5774e64b00")
+		(property "Reference" "H1"
+			(at 68.58 114.2999 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "MountingHole"
+			(at 68.58 116.8399 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "MountingHole:MountingHole_3.2mm_M3"
+			(at 66.04 115.57 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 66.04 115.57 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Mounting Hole without connection"
+			(at 66.04 115.57 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(instances
+			(project ""
+				(path "/bb8456c6-cb9e-43f6-bac1-343966810da5"
+					(reference "H1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Mechanical:MountingHole")
+		(at 66.04 134.62 0)
+		(unit 1)
+		(exclude_from_sim yes)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "81755f17-ae19-4665-ab2a-a0474ccbdfab")
+		(property "Reference" "H4"
+			(at 68.58 133.3499 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "MountingHole"
+			(at 68.58 135.8899 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "MountingHole:MountingHole_3.2mm_M3"
+			(at 66.04 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 66.04 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Mounting Hole without connection"
+			(at 66.04 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "Inverter_test"
+				(path "/bb8456c6-cb9e-43f6-bac1-343966810da5"
+					(reference "H4")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Mechanical:MountingHole")
+		(at 66.04 121.92 0)
+		(unit 1)
+		(exclude_from_sim yes)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "d4409372-c0ff-4db3-881f-a157040ef28c")
+		(property "Reference" "H2"
+			(at 68.58 120.6499 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "MountingHole"
+			(at 68.58 123.1899 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "MountingHole:MountingHole_3.2mm_M3"
+			(at 66.04 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 66.04 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Mounting Hole without connection"
+			(at 66.04 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "Inverter_test"
+				(path "/bb8456c6-cb9e-43f6-bac1-343966810da5"
+					(reference "H2")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(sheet
+		(at 170.18 116.84)
+		(size 36.83 17.78)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 255 255 194 1.0000)
+		)
+		(uuid "2e25cbd3-aa7e-444c-9a34-2fd90145abac")
+		(property "Sheetname" "Gate_Driver 5"
+			(at 170.18 116.1284 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "Gate_Driver/Gate_Driver.kicad_sch"
+			(at 170.18 135.2046 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "DRAIN" output
+			(at 207.01 124.46 0)
+			(uuid "0a0d80e1-b5c1-415a-a940-119ce53fa110")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "GATE" output
+			(at 207.01 119.38 0)
+			(uuid "28c29805-39f4-4573-98cc-9cec94f2c7f7")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "5V_GATE_PWM" input
+			(at 170.18 119.38 180)
+			(uuid "63642124-f626-419e-a5ad-d07b4b9f16d4")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "D_SOURCE" output
+			(at 207.01 129.54 0)
+			(uuid "af99bc61-f76e-442b-a4b3-58b91536f6b5")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "ALARM_FLT" output
+			(at 170.18 124.46 180)
+			(uuid "3a4890cc-c2bd-46e4-8f97-8d11a01d20cc")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "ALARM_RDY" output
+			(at 170.18 129.54 180)
+			(uuid "1281ae95-8875-47a1-902f-f1ced41f5223")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "EN" output
+			(at 170.18 133.35 180)
+			(uuid "57550731-bc71-4ef7-8197-db9321a30508")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(instances
+			(project "Inverter_test"
+				(path "/bb8456c6-cb9e-43f6-bac1-343966810da5"
+					(page "6")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 170.18 43.18)
+		(size 36.83 17.78)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 255 255 194 1.0000)
+		)
+		(uuid "640fe095-dc31-4e2f-9696-55fa3856b8fe")
+		(property "Sheetname" "Gate_Driver 2"
+			(at 170.18 42.4684 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "Gate_Driver/Gate_Driver.kicad_sch"
+			(at 170.18 61.5446 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "DRAIN" output
+			(at 207.01 50.8 0)
+			(uuid "b4e8ca96-176e-4558-b3f9-1dfd96adeabb")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "GATE" output
+			(at 207.01 45.72 0)
+			(uuid "d63f1e9a-e3ea-41cd-b424-e4329d1f2777")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "5V_GATE_PWM" input
+			(at 170.18 45.72 180)
+			(uuid "d86abbe4-69d1-433c-9627-598ff9f84567")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "D_SOURCE" output
+			(at 207.01 55.88 0)
+			(uuid "3561485b-6f75-47ab-8019-6374181ba211")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "ALARM_FLT" output
+			(at 170.18 50.8 180)
+			(uuid "db6c4606-77cf-45bb-b0d4-5203bb06d368")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "ALARM_RDY" output
+			(at 170.18 55.88 180)
+			(uuid "30a17eeb-95f9-4cfa-bd54-b2510422c3d9")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "EN" output
+			(at 170.18 59.69 180)
+			(uuid "0e98e2b7-59bd-4ef6-ad65-7c7a29d5ec59")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(instances
+			(project "Inverter_test"
+				(path "/bb8456c6-cb9e-43f6-bac1-343966810da5"
+					(page "3")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 113.03 19.05)
+		(size 31.75 140.97)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 255 255 194 1.0000)
+		)
+		(uuid "6b1e4bec-88c1-4c7b-9d24-9c0411c7a55c")
+		(property "Sheetname" "Buffer"
+			(at 113.03 18.3384 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "Buffer/Buffer.kicad_sch"
+			(at 113.03 160.6046 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "5V_GATE1" output
+			(at 144.78 21.59 0)
+			(uuid "5b144593-910c-4935-aa03-ed5d01edb1ac")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "5V_GATE2" output
+			(at 144.78 45.72 0)
+			(uuid "9e6f31c1-3163-4951-a388-7f0526cc0e79")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "5V_GATE3" output
+			(at 144.78 69.85 0)
+			(uuid "dd20f757-4f98-4a1a-9c57-44d965fd0838")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "5V_GATE4" output
+			(at 144.78 93.98 0)
+			(uuid "e745bffc-6701-4592-b735-3c12f3b81f17")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "5V_GATE5" output
+			(at 144.78 119.38 0)
+			(uuid "7029d4d1-af0c-4f59-a596-bf59ca4e7edc")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "5V_GATE6" output
+			(at 144.78 144.78 0)
+			(uuid "5b22ba8d-b3eb-4be1-bcec-2b1845622995")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "Alarm_FLT_1" input
+			(at 144.78 26.67 0)
+			(uuid "268fbef5-b67f-4726-b8bc-55e4f41c51aa")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "Alarm_FLT_2" input
+			(at 144.78 50.8 0)
+			(uuid "9320cb6d-021c-46fc-8296-131a3d0d2499")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "Alarm_FLT_3" input
+			(at 144.78 74.93 0)
+			(uuid "a431b880-7d4a-481c-8ad8-bca5cc20d3f8")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "Alarm_FLT_4" input
+			(at 144.78 99.06 0)
+			(uuid "0aa4db0f-089f-4035-ab08-737e2b43b3af")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "Alarm_RDY_1" input
+			(at 144.78 31.75 0)
+			(uuid "8d4e235f-4461-45cf-bbe2-7ff02934256c")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "Alarm_RDY_2" input
+			(at 144.78 55.88 0)
+			(uuid "621fd237-dfe8-4f0f-a6d9-affda0d27baa")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "Alarm_RDY_3" input
+			(at 144.78 80.01 0)
+			(uuid "0c45ea60-3c00-4499-b705-9373bf357f48")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "Alarm_RDY_4" input
+			(at 144.78 104.14 0)
+			(uuid "a0c82abf-de89-47dc-8674-7f28ab09b91c")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "EN" input
+			(at 144.78 83.82 0)
+			(uuid "5073499a-cf44-4f01-881f-c358b8ae9968")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "Alarm_FLT_5" input
+			(at 144.78 124.46 0)
+			(uuid "30d3dde9-cb70-4338-a917-e2e9a016c551")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "Alarm_FLT_6" input
+			(at 144.78 149.86 0)
+			(uuid "b659e03e-d079-4066-97fb-9c0fdb409527")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "Alarm_RDY_5" input
+			(at 144.78 129.54 0)
+			(uuid "603bba66-846b-4e74-b19b-1ddb1165b1c2")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "Alarm_RDY_6" input
+			(at 144.78 154.94 0)
+			(uuid "367eef12-f430-46da-9947-3d6f06538d38")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(instances
+			(project "Inverter_test"
+				(path "/bb8456c6-cb9e-43f6-bac1-343966810da5"
+					(page "9")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 217.17 19.05)
+		(size 17.78 140.97)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 255 255 194 1.0000)
+		)
+		(uuid "6d2a48ff-cda0-4bca-a10a-6c47a8d46025")
+		(property "Sheetname" "Three Phase"
+			(at 217.17 17.0684 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "Three_Phase_Half_Bridge/Three_Phase_Half_Bridge.kicad_sch"
+			(at 216.662 162.814 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "DRAIN1" bidirectional
+			(at 217.17 26.67 180)
+			(uuid "5720f103-abc7-44ab-b6b6-d13318c29c4b")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "DRAIN2" bidirectional
+			(at 217.17 50.8 180)
+			(uuid "c005f0a8-7d30-46e8-b258-53b25152e7a4")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "DRAIN3" bidirectional
+			(at 217.17 74.93 180)
+			(uuid "432121c5-4a89-42c4-823b-9d133c3c04cf")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "DRAIN4" bidirectional
+			(at 217.17 99.06 180)
+			(uuid "1b1cba10-fb9e-458e-a8ad-73125b589f8c")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "DRAIN5" bidirectional
+			(at 217.17 124.46 180)
+			(uuid "714c24fc-6c48-49ff-ab31-771791b4b3bc")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "DRAIN6" bidirectional
+			(at 217.17 149.86 180)
+			(uuid "e8a3a0de-41ef-4799-8d5c-cfa0b6847715")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "GATE1 " bidirectional
+			(at 217.17 21.59 180)
+			(uuid "ef3b25f0-fbe3-4a46-ad29-a965eff3e0f9")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "GATE2" bidirectional
+			(at 217.17 45.72 180)
+			(uuid "8c97d965-e1ca-42be-b78a-5657640a0376")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "GATE3" bidirectional
+			(at 217.17 69.85 180)
+			(uuid "9fb47c41-3c2c-4cea-badf-b967fb089370")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "GATE4" bidirectional
+			(at 217.17 93.98 180)
+			(uuid "2f28aa3f-21f4-45a8-89c2-5949db2b24c9")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "GATE5" bidirectional
+			(at 217.17 119.38 180)
+			(uuid "92e903ad-d5a0-4b2f-b007-62511c9cdc6f")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "GATE6" bidirectional
+			(at 217.17 144.78 180)
+			(uuid "1bb42c60-c910-4a65-9726-63ae4f0d25e4")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "D_SOURCE1" bidirectional
+			(at 217.17 31.75 180)
+			(uuid "b7955585-af42-4bc1-85d8-9354e37fe4f0")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "D_SOURCE2" bidirectional
+			(at 217.17 55.88 180)
+			(uuid "89c394e8-c8f0-419a-b3ef-c8d8a4cf5b1e")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "D_SOURCE3" bidirectional
+			(at 217.17 80.01 180)
+			(uuid "73a139ec-39a0-4f31-98fa-6ebbf5786e76")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "D_SOURCE5" bidirectional
+			(at 217.17 129.54 180)
+			(uuid "7833a167-be57-4274-878f-4562e7cb1392")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "D_SOURCE6" bidirectional
+			(at 217.17 154.94 180)
+			(uuid "2df7a97c-f7ba-4b40-a900-a22af35116b8")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "D_SOURCE4" bidirectional
+			(at 217.17 104.14 180)
+			(uuid "d86fda19-c86c-4896-8f31-b0ba9b7550f7")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(instances
+			(project "Inverter_test"
+				(path "/bb8456c6-cb9e-43f6-bac1-343966810da5"
+					(page "8")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 170.18 19.05)
+		(size 36.83 17.78)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 255 255 194 1.0000)
+		)
+		(uuid "72936f7d-85b8-4aa5-88a8-de52fb42e649")
+		(property "Sheetname" "Gate_Driver 1"
+			(at 170.18 18.3384 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "Gate_Driver/Gate_Driver.kicad_sch"
+			(at 170.18 37.4146 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "DRAIN" output
+			(at 207.01 26.67 0)
+			(uuid "1d8fb157-bdcc-43d9-a8f3-332b28d1a258")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "GATE" output
+			(at 207.01 21.59 0)
+			(uuid "e3fbdcfc-fbdc-483a-8b93-2fc94943a1e9")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "5V_GATE_PWM" input
+			(at 170.18 21.59 180)
+			(uuid "fa775610-1747-44fa-8df9-311b87a30f76")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "D_SOURCE" output
+			(at 207.01 31.75 0)
+			(uuid "cdade982-7c77-4420-94f8-f851ec63803a")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "ALARM_FLT" output
+			(at 170.18 26.67 180)
+			(uuid "828806c6-7a25-4079-b148-1847264639b4")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "ALARM_RDY" output
+			(at 170.18 31.75 180)
+			(uuid "43f86000-b8f9-46cd-b3e9-f407c71caae4")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "EN" output
+			(at 170.18 35.56 180)
+			(uuid "490840d1-e0d5-4d1a-ada7-ab21362edb61")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(instances
+			(project "Inverter_test"
+				(path "/bb8456c6-cb9e-43f6-bac1-343966810da5"
+					(page "2")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 62.23 45.72)
+		(size 38.1 16.51)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 255 255 194 1.0000)
+		)
+		(uuid "9f0235a4-2d66-46ef-bec0-9f9cd8d374db")
+		(property "Sheetname" "Power_Supply"
+			(at 62.23 45.0084 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "Power_Supply/Power_Supply.kicad_sch"
+			(at 62.23 62.8146 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "Inverter_test"
+				(path "/bb8456c6-cb9e-43f6-bac1-343966810da5"
+					(page "10")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 170.18 142.24)
+		(size 36.83 17.78)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 255 255 194 1.0000)
+		)
+		(uuid "a26c4f43-d766-4627-8ad6-f4a0cf2eb698")
+		(property "Sheetname" "Gate_Driver 6"
+			(at 170.18 141.5284 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "Gate_Driver/Gate_Driver.kicad_sch"
+			(at 170.18 160.6046 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "DRAIN" output
+			(at 207.01 149.86 0)
+			(uuid "80c6cc00-20c2-4f3d-8eab-2bf26656d00e")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "GATE" output
+			(at 207.01 144.78 0)
+			(uuid "f6636561-1ed6-439f-a282-81f38b7aa891")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "5V_GATE_PWM" input
+			(at 170.18 144.78 180)
+			(uuid "c09785ba-0796-4db5-a32b-fddf77ee0391")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "D_SOURCE" output
+			(at 207.01 154.94 0)
+			(uuid "d4459ded-e15f-4bc8-885f-ded6dd6e88ef")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "ALARM_FLT" output
+			(at 170.18 149.86 180)
+			(uuid "f5778131-7dbb-4f27-8dd3-89eb27196cff")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "ALARM_RDY" output
+			(at 170.18 154.94 180)
+			(uuid "f963014e-890d-49fc-a6c1-e599db02f074")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "EN" output
+			(at 170.18 158.75 180)
+			(uuid "161758a8-6809-4487-bd6f-525391c89cc8")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(instances
+			(project "Inverter_test"
+				(path "/bb8456c6-cb9e-43f6-bac1-343966810da5"
+					(page "7")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 170.18 67.31)
+		(size 36.83 17.78)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 255 255 194 1.0000)
+		)
+		(uuid "a6dbb8ba-1ad6-4c8c-ac8c-a5988b6db291")
+		(property "Sheetname" "Gate_Driver 3"
+			(at 170.18 66.5984 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "Gate_Driver/Gate_Driver.kicad_sch"
+			(at 170.18 85.6746 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "DRAIN" output
+			(at 207.01 74.93 0)
+			(uuid "dca02db1-b0a2-4ca8-a55f-4d03de75d47f")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "GATE" output
+			(at 207.01 69.85 0)
+			(uuid "7f7d1a2c-883e-4409-8fd4-1b6347055b3c")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "5V_GATE_PWM" input
+			(at 170.18 69.85 180)
+			(uuid "fcfaac90-6b9a-46b5-9121-0e0cabae579e")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "D_SOURCE" output
+			(at 207.01 80.01 0)
+			(uuid "8c40a793-eac8-4e4e-80db-4175d877a575")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "ALARM_FLT" output
+			(at 170.18 74.93 180)
+			(uuid "12c886b9-3273-41bf-9bb2-b8c5fc9767bf")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "ALARM_RDY" output
+			(at 170.18 80.01 180)
+			(uuid "943e493c-5690-4729-b5d1-e02565d714cb")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "EN" output
+			(at 170.18 83.82 180)
+			(uuid "3ac57958-2f84-4008-a0fe-d49489c68622")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(instances
+			(project "Inverter_test"
+				(path "/bb8456c6-cb9e-43f6-bac1-343966810da5"
+					(page "4")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 170.18 91.44)
+		(size 36.83 17.78)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 255 255 194 1.0000)
+		)
+		(uuid "acedd4a5-c967-4a38-b9ab-1049ccc4b248")
+		(property "Sheetname" "Gate_Driver 4"
+			(at 170.18 90.7284 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "Gate_Driver/Gate_Driver.kicad_sch"
+			(at 170.18 109.8046 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "DRAIN" output
+			(at 207.01 99.06 0)
+			(uuid "df147722-1c99-4468-a2fd-0c119376ce02")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "GATE" output
+			(at 207.01 93.98 0)
+			(uuid "ba8de51b-965f-4d38-95a4-2cdbc64db337")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "5V_GATE_PWM" input
+			(at 170.18 93.98 180)
+			(uuid "974947d7-4837-4f97-b396-d398c56bb7f0")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "D_SOURCE" output
+			(at 207.01 104.14 0)
+			(uuid "dd04e668-3515-467b-824c-42bb8c29d066")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "ALARM_FLT" output
+			(at 170.18 99.06 180)
+			(uuid "44a33855-ef5e-4045-8162-2b18e72ee609")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "ALARM_RDY" output
+			(at 170.18 104.14 180)
+			(uuid "a112283a-049d-4d81-b374-600d57c242f3")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "EN" output
+			(at 170.18 107.95 180)
+			(uuid "f6b3cb69-5cf8-42d5-9e92-fe802d7b4892")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(instances
+			(project "Inverter_test"
+				(path "/bb8456c6-cb9e-43f6-bac1-343966810da5"
+					(page "5")
+				)
+			)
+		)
+	)
+	(sheet_instances
+		(path "/"
+			(page "1")
+		)
+	)
+	(embedded_fonts no)
+)

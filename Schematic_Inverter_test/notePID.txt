@@ -1,0 +1,32 @@
+làm hàm code PID
+
+gồm các biến như sau 
+thời gian lấy mẫu: T
+xung của encoder : EncoderCounter
+Gía trị đặt : SetPoint
+Gía trị hiện tại: CurrentPoint
+Sai số hiện tại : E
+Sai số trước đó 1 mẫu : E1
+Sai số trước đó 2 mẫu : E2
+các thông số của PID : alpha, beta, gamma, Kp,Kd,Ki;
+
+xuất giá trị : Output,LastOutput
+
+hàm PID
+E = SetPoint - CurrentPoint
+alpha = 2*T*Kp + K*T*T + 2*Kd
+beta  = T*T*Ki - 4*Kd  - 2*T*Kp
+gamma = 2*Kd
+
+Output = ( alpha*E  + beta*E1 + gamma*E2 + 2*T*lastOutput)/(2*T);
+lastOutput = Output
+E2=E1
+E1=E
+
+hàm Park_1
+Valfa = cos(Angle)*Vd - sin(Angle)*Vq
+Vbeta = sin(Angle)*Vd + cos(Angle)*Vq
+//
+Id*cos(Angle)-Iq*sin(Angle)
+Id*cos(Angle-2*pi/3)-Iq*sin(Angle-2*pi/3)
+Id*cos(Angle+2*pi/3)-Iq*sin(Angle+2*pi/3)
